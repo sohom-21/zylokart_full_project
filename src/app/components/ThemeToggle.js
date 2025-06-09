@@ -1,3 +1,4 @@
+'use client'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
@@ -17,7 +18,6 @@ export default function ThemeToggle() {
       onClick={() => {
         const nextTheme = theme === 'dark' ? 'light' : 'dark'
         setTheme(nextTheme)
-        console.log('Theme toggled to:', nextTheme)
       }}
       className="p-2 rounded text-xl"
     >
