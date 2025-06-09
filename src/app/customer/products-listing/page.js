@@ -1,5 +1,5 @@
 'use client'
-import Navbar from '@/app/components/Navbar'
+import CustomerNavbar from '@/app/components/navbar-customer'
 import Footer from '@/app/components/Footer'
 
 const sampleProducts = [
@@ -49,7 +49,7 @@ export default function Productslistings() {
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-zinc-900 transition-colors">
-      <Navbar />
+      <CustomerNavbar />
       {/* Promo Bar */}
       <div className="w-full bg-zinc-800 py-3 px-2 flex flex-col sm:flex-row items-center justify-center gap-2">
         <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over $100. Use code</span>
