@@ -4,6 +4,7 @@ import Footer from '@/app/components/Footer'
 import Link from 'next/link'
 import { useState } from 'react'
 import { signIn } from '@/app/utiils/supabase/auth'
+import { Toaster, toast } from 'react-hot-toast'
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -30,13 +31,17 @@ export default function Login() {
       const { error } = await signIn(form.email, form.password)
       if (error) {
         setMessage(error.message)
+        toast.error(error.message)
       } else {
         setMessage('Login successful! Redirecting...')
+        toast.success('Login successful! Redirecting...')
         // Optionally redirect to a dashboard or home page
         // window.location.href = '/dashboard'
       }
     } catch(error) {
-      setMessage('Network error')
+      setMessage(error.message || 'An error occurred. Please try again later.')
+      toast.error(error.message || 'An error occurred. Please try again later.')
+      console.error('Login error:', error)
     }
     setLoading(false)
   }
@@ -102,7 +107,7 @@ export default function Login() {
                 />
                 <label htmlFor="remember" className="text-white text-sm">Remember me</label>
               </div>
-              <Link href="/auth/forgot-password" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
+              <Link href="/auth/resetpassword" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
             </div>
             <button
               type="submit"
@@ -118,6 +123,7 @@ export default function Login() {
         </div>
       </main>
       <Footer />
+      <Toaster />
     </div>
   )
 }
