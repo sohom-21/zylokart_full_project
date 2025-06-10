@@ -3,11 +3,35 @@ import { useEffect, useState } from "react";
 import CustomerNavbar from '@/app/components/navbar-customer'
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
+import supabase from "@/app/utiils/supabase/client";
 
 export default function Homepage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(null);
+
+
+  const fetchSession = async () => {
+      try {
+        const res = await supabase.auth.getSession();
+        if (res.ok) {
+          const sessionData = await res.json();
+          setSession(sessionData);
+        } else {
+          setSession(null);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        setSession(null);
+      }
+    };
+  
+    useEffect(() => {
+    // Check if user is logged in
+    fetchSession();
+  }, [])
+  
 
   useEffect(() => {
     // Replace these URLs with your backend endpoints
