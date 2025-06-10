@@ -7,8 +7,7 @@ export async function signUp(email, password) {
     password,
   });
   return { data, error };
-}  
-// this is the function to sign up a user returns data and error as object 
+}  // this is the function to sign up a user returns data and error as object 
 
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({
