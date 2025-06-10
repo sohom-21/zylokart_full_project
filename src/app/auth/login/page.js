@@ -3,6 +3,7 @@ import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import Link from 'next/link'
 import { useState } from 'react'
+import { signIn } from '@/app/utiils/supabase/auth'
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -26,22 +27,15 @@ export default function Login() {
     setMessage('')
     setLoading(true)
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setMessage('Login successful!')
-        // Optionally redirect to dashboard
+      const { error } = await signIn(form.email, form.password)
+      if (error) {
+        setMessage(error.message)
       } else {
-        setMessage(data.error || 'Login failed')
+        setMessage('Login successful! Redirecting...')
+        // Optionally redirect to a dashboard or home page
+        // window.location.href = '/dashboard'
       }
-    } catch (err) {
+    } catch(error) {
       setMessage('Network error')
     }
     setLoading(false)
