@@ -36,14 +36,14 @@ function ResetPassword() {
          };
          
          return (
-         <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-400 animate-gradient-x">
+         <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-600 via-purple-300 to-blue-500 animate-gradient-x">
          <Navbar />
          <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
          <div className="max-w-md w-full bg-white/30 rounded-3xl shadow-2xl p-10 backdrop-blur-md border border-white/20 relative overflow-hidden">
          {/* Animated background shapes */}
          <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-400 opacity-30 rounded-full blur-2xl animate-pulse z-0" />
          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-300 opacity-30 rounded-full blur-2xl animate-pulse z-0" />
-         <h2 className="text-3xl font-extrabold mb-8 text-center text-indigo-900 drop-shadow-lg z-10 relative animate-fade-in">Reset Password</h2>
+         <h2 className="text-3xl font-extrabold mb-8 text-center text-blue-800 drop-shadow-blue-100 z-10 relative animate-fade-in">Reset Password</h2>
          <form onSubmit={handleSubmit} className="space-y-6 z-10 relative animate-fade-in">
          <div className="mb-2">
          <label htmlFor="email" className="block text-base font-medium text-indigo-900 mb-2">Email</label>
