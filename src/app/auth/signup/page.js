@@ -1,5 +1,5 @@
 'use client'
-import Navbar from '@/app/components/Navbar'
+import Navbar from '@/app/components/Navbars/Navbar-landing'
 import Footer from '@/app/components/Footer'
 import Link from 'next/link'
 import { signUp } from '@/app/utiils/supabase/auth'

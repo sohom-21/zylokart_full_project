@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import CustomerNavbar from '@/app/components/navbar-customer'
+import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 
 const fallbackProduct = {
