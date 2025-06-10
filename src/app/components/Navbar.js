@@ -26,10 +26,10 @@ export default function Navbar() {
             <Link href="/collections" className="font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white">
               Collections
             </Link>
-            <Link href="/about" className="font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white">
+            <Link href="/pages/about" className="font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white">
               About
             </Link>
-            <Link href="/contact" className="font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white">
+            <Link href="/pages/contact-us" className="font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white">
               Contact
             </Link>
           </div>
@@ -90,7 +90,7 @@ export default function Navbar() {
             <Link href="/pages/about" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
               About
             </Link>
-            <Link href="/contact" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
+            <Link href="/pages/contact-us" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
               Contact
             </Link>
             <div className="flex items-center space-x-2 mt-4">
