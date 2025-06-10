@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import Navbar from './components/Navbar'
+import Navbar from './components/Navbars/Navbar-landing'
 import Footer from "./components/Footer";
 import Link from "next/link";
 

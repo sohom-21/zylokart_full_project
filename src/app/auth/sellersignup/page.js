@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
-import Navbar from '../../components/Navbar'
+import Navbar from '../../components/Navbars/Navbar-landing'
 import Footer from '../../components/Footer'
 import { createClient } from '@supabase/supabase-js'
 

@@ -1,5 +1,5 @@
 'use client';
-import Navbar from "@/app/components/Navbar";
+import Navbar from "@/app/components/Navbars/Navbar-landing";
 import Footer from "@/app/components/Footer";
 import { useState } from "react";
 import { resetPassword } from "@/app/utiils/supabase/auth";
