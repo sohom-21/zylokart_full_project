@@ -40,7 +40,7 @@ export default function Signup() {
     }
     setLoading(true)
     try {
-      const { error } = await signUp(form.email, form.password)
+      const { error } = await signUp(form.email, form.password, { full_name: form.name })
       if (error) {
         setMessage(error.message)
         toast.error(error.message)

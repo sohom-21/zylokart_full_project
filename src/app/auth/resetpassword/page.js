@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { resetPassword } from "@/app/utiils/supabase/auth";
 import { Toaster, toast } from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/app/utiils/supabase/client";
+import supabase from "@/app/utiils/supabase/client";
 
 function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -16,6 +16,23 @@ function ResetPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessToken = searchParams.get("access_token");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#access_token")) {
+      const hash = window.location.hash.substring(1); // remove '#'
+      const params = new URLSearchParams(hash);
+      // Build new URL with query params
+      const search = params.toString();
+      window.location.replace(`/auth/resetpassword?${search}`);
+    }
+    // Set session if access_token and refresh_token are present
+    if (accessToken && searchParams.get("refresh_token")) {
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: searchParams.get("refresh_token"),
+      });
+    }
+  }, [accessToken, searchParams]);
 
   const handleChange = (e) => {
     setEmail(e.target.value);
