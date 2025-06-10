@@ -87,7 +87,7 @@ export default function Navbar() {
             <Link href="/collections" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
               Collections
             </Link>
-            <Link href="/about" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
+            <Link href="/pages/about" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
               About
             </Link>
             <Link href="/contact" className="block font-medium hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-white" onClick={() => setMenuOpen(false)}>
