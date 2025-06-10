@@ -107,7 +107,7 @@ export default function Login() {
                 />
                 <label htmlFor="remember" className="text-white text-sm">Remember me</label>
               </div>
-              <Link href="/auth/forgot-password" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
+              <Link href="/auth/resetpassword" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
             </div>
             <button
               type="submit"
