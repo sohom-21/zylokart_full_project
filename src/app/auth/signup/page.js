@@ -2,6 +2,7 @@
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import Link from 'next/link'
+import { signUp } from '@/app/utiils/supabase/auth'
 import { useState } from 'react'
 
 export default function Signup() {
@@ -36,26 +37,26 @@ export default function Signup() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setMessage('Signup successful! Please login.')
-        // Optionally redirect to login page
+      const { error } = await signUp(form.email, form.password)
+      if (error) {
+        setMessage(error.message)
       } else {
-        setMessage(data.error || 'Signup failed')
+        setMessage('Sign up successful! Please check your email for confirmation.')
+        setForm({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          terms: false,
+        })
       }
-    } catch (err) {
-      setMessage('Network error')
     }
-    setLoading(false)
+    catch (error) {
+      setMessage('An error occurred. Please try again later.')
+      console.error('Sign up error:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
