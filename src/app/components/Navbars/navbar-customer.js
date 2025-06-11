@@ -1,30 +1,48 @@
-'use client'
-import Link from 'next/link'
-import { FiShoppingCart, FiHeart, FiUser } from 'react-icons/fi'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+"use client";
+import Link from "next/link";
+import { FiShoppingCart, FiHeart, FiUser } from "react-icons/fi";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function CustomerNavbar() {
   return (
     <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6 py-3">
       {/* Logo */}
-      <Link href="/" className="text-2xl font-bold font-['Playfair_Display'] tracking-widest text-white">
+      <Link
+        href="/"
+        className="text-2xl font-bold font-['Playfair_Display'] tracking-widest text-white"
+      >
         Zylokart
       </Link>
       {/* Main Nav */}
       <div className="hidden md:flex gap-8">
-        <Link href="/" className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white">
+        <Link
+          href="/"
+          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
+        >
           Home
         </Link>
-        <Link href="/customer/products-listing" className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white">
+        <Link
+          href="/customer/products-listing"
+          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
+        >
           Shop
         </Link>
-        <Link href="/collections" className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white">
+        <Link
+          href="/collections"
+          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
+        >
           Collections
         </Link>
-        <Link href="/about" className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white">
+        <Link
+          href="/about"
+          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
+        >
           About
         </Link>
-        <Link href="/contact" className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white">
+        <Link
+          href="/contact"
+          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
+        >
           Contact
         </Link>
       </div>
@@ -38,7 +56,9 @@ export default function CustomerNavbar() {
         <Link href="/customer/cart" className="relative group">
           <FiShoppingCart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
           {/* Example badge */}
-          <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-xs rounded-full px-1">3</span>
+          <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-xs rounded-full px-1">
+            3
+          </span>
         </Link>
         <Link href="/customer/wishlist" className="group">
           <FiHeart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
@@ -49,5 +69,5 @@ export default function CustomerNavbar() {
         </Avatar>
       </div>
     </nav>
-  )
+  );
 }

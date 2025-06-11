@@ -21,7 +21,10 @@ function ResetPassword() {
 
   // Handle hash to query param redirect and set session
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash.startsWith("#access_token")) {
+    if (
+      typeof window !== "undefined" &&
+      window.location.hash.startsWith("#access_token")
+    ) {
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
       window.location.replace(`/auth/resetpassword?${params.toString()}`);
@@ -82,9 +85,15 @@ function ResetPassword() {
             {accessToken ? "Set New Password" : "Reset Password"}
           </h2>
           {!accessToken ? (
-            <form onSubmit={handleSubmit} className="space-y-6 z-10 relative animate-fade-in">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-6 z-10 relative animate-fade-in"
+            >
               <div className="mb-2">
-                <label htmlFor="email" className="block text-base font-medium text-indigo-900 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-base font-medium text-indigo-900 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -117,9 +126,15 @@ function ResetPassword() {
               </button>
             </form>
           ) : (
-            <form onSubmit={handlePasswordUpdate} className="space-y-6 z-10 relative animate-fade-in">
+            <form
+              onSubmit={handlePasswordUpdate}
+              className="space-y-6 z-10 relative animate-fade-in"
+            >
               <div className="mb-2">
-                <label htmlFor="fullName" className="block text-base font-medium text-indigo-900 mb-2">
+                <label
+                  htmlFor="fullName"
+                  className="block text-base font-medium text-indigo-900 mb-2"
+                >
                   Full Name
                 </label>
                 <input
@@ -134,7 +149,10 @@ function ResetPassword() {
                 />
               </div>
               <div className="mb-2">
-                <label htmlFor="newPassword" className="block text-base font-medium text-indigo-900 mb-2">
+                <label
+                  htmlFor="newPassword"
+                  className="block text-base font-medium text-indigo-900 mb-2"
+                >
                   New Password
                 </label>
                 <input
