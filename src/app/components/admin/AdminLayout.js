@@ -23,8 +23,8 @@ import {
 } from "@/app/components/ui/avatar";
 
 const AdminLayout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // For mobile
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // For desktop
   const pathname = usePathname();
 
   const navigation = [
@@ -37,36 +37,20 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       {/* Mobile sidebar (fixed) */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 z-50 bg-slate-900 shadow-lg transform transition-all duration-300 ease-in-out w-64 ${{
-          true: sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        }}`}
-        style={{ display: sidebarOpen ? 'block' : 'none' }}
+        className={`lg:hidden fixed inset-y-0 left-0 z-50 bg-slate-900 shadow-lg transform transition-all duration-300 ease-in-out w-64 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <div className="flex items-center justify-between h-16 px-6 border-b border-slate-700">
-          {!sidebarCollapsed && (
-            <h1 className="text-xl font-bold text-white">ZyloKart Admin</h1>
-          )}
-          <div className="flex items-center space-x-2">
-            <button
-              className="hidden lg:block p-1 rounded-lg hover:bg-slate-800"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            >
-              {sidebarCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-gray-300" />
-              ) : (
-                <ChevronLeft className="h-5 w-5 text-gray-300" />
-              )}
-            </button>
-            <button
-              className="lg:hidden p-1 rounded-lg hover:bg-slate-800"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="h-6 w-6 text-gray-300" />
-            </button>
-          </div>
+        <div className="flex items-center justify-between h-16 px-4 border-b border-slate-700">
+          <h1 className="text-xl font-bold text-white">ZyloKart Admin</h1>
+          <button
+            className="p-1 rounded-lg hover:bg-slate-800"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X className="h-6 w-6 text-gray-300" />
+          </button>
         </div>
         <nav className="mt-8 px-4">
           {navigation.map((item) => {
@@ -76,67 +60,68 @@ const AdminLayout = ({ children }) => {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => setSidebarOpen(false)}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-2 ${
                   isActive
                     ? "bg-blue-600 text-white"
                     : "text-gray-300 hover:bg-slate-800 hover:text-white"
                 }`}
-                title={sidebarCollapsed ? item.name : ""}
+                title={item.name}
               >
-                <Icon className={`h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                {!sidebarCollapsed && <span>{item.name}</span>}
+                <Icon className="h-5 w-5 mr-3" />
+                <span>{item.name}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* User section at bottom */}
-        {!sidebarCollapsed && (
-          <div className="absolute bottom-6 left-4 right-4">
-            <div className="bg-slate-800 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src="/admin-avatar.jpg" />
-                  <AvatarFallback className="text-sm bg-blue-600 text-white">
-                    AD
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
-                    Admin User
-                  </p>
-                  <p className="text-xs text-gray-400 truncate">Premium Plan</p>
-                </div>
+        {/* User section at bottom for mobile */}
+        <div className="absolute bottom-6 left-4 right-4">
+          <div className="bg-slate-800 rounded-lg p-4">
+            <div className="flex items-center space-x-3">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src="/admin-avatar.jpg" />
+                <AvatarFallback className="text-sm bg-blue-600 text-white">
+                  AD
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  Admin User
+                </p>
+                <p className="text-xs text-gray-400 truncate">Premium Plan</p>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
-      {/* Desktop sidebar (relative/static) */}
+
+      {/* Desktop sidebar (part of flex layout) */}
       <div
-        className={`hidden lg:flex flex-col bg-slate-900 shadow-lg transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-16' : 'w-64'}`}
+        className={`hidden lg:flex flex-col bg-slate-900 shadow-lg transition-all duration-300 ease-in-out ${
+          sidebarCollapsed ? 'w-16' : 'w-64'
+        }`}
         style={{ minHeight: '100vh' }}
       >
         <div className="flex flex-col flex-1">
           <div>
-            <div className="flex items-center justify-between h-16 px-6 border-b border-slate-700">
+            <div className={`flex items-center h-16 border-b border-slate-700 ${sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'}`}>
               {!sidebarCollapsed && (
-                <h1 className="text-xl font-bold text-white">ZyloKart Admin</h1>
+                <h1 className="text-lg font-semibold text-white whitespace-nowrap overflow-hidden">ZyloKart Admin</h1>
               )}
-              <div className="flex items-center space-x-2">
-                <button
-                  className="p-1 rounded-lg hover:bg-slate-800"
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                >
-                  {sidebarCollapsed ? (
-                    <ChevronRight className="h-5 w-5 text-gray-300" />
-                  ) : (
-                    <ChevronLeft className="h-5 w-5 text-gray-300" />
-                  )}
-                </button>
-              </div>
+              <button
+                className="p-1 rounded-lg hover:bg-slate-800"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {sidebarCollapsed ? (
+                  <ChevronRight className="h-5 w-5 text-gray-300" />
+                ) : (
+                  <ChevronLeft className="h-5 w-5 text-gray-300" />
+                )}
+              </button>
             </div>
-            <nav className="mt-8 px-4">
+            <nav className={`mt-8 ${sidebarCollapsed ? 'px-2' : 'px-4'}`}>
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -144,22 +129,36 @@ const AdminLayout = ({ children }) => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-2 ${
+                    className={`flex items-center py-3 text-sm font-medium rounded-lg transition-colors mb-2 w-full ${
                       isActive
                         ? "bg-blue-600 text-white"
                         : "text-gray-300 hover:bg-slate-800 hover:text-white"
+                    } ${
+                      sidebarCollapsed
+                        ? 'justify-center px-2' 
+                        : 'px-4'
                     }`}
-                    title={sidebarCollapsed ? item.name : ""}
+                    title={item.name}
                   >
-                    <Icon className={`h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                    {!sidebarCollapsed && <span>{item.name}</span>}
+                    <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'}`} />
+                    {!sidebarCollapsed && <span className="whitespace-nowrap overflow-hidden">{item.name}</span>}
                   </Link>
                 );
               })}
             </nav>
           </div>
-          {/* User section at bottom (no absolute) */}
-          {!sidebarCollapsed && (
+
+          {/* User section at bottom (desktop) */}
+          {sidebarCollapsed ? (
+             <div className="mt-auto p-4 flex justify-center items-center">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src="/admin-avatar.jpg" />
+                  <AvatarFallback className="text-sm bg-blue-600 text-white">
+                    AD
+                  </AvatarFallback>
+                </Avatar>
+             </div>
+          ) : (
             <div className="mt-auto p-4">
               <div className="bg-slate-800 rounded-lg p-4">
                 <div className="flex items-center space-x-3">
@@ -181,8 +180,9 @@ const AdminLayout = ({ children }) => {
           )}
         </div>
       </div>
+
       {/* Main content wrapper */}
-      <div className={`flex-1 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'} ml-0 transition-all duration-300`}>
+      <div className={`flex-1 flex flex-col ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'} ml-0 transition-all duration-300`}>
         {/* Top header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="flex items-center justify-between h-16 px-6">
@@ -225,7 +225,9 @@ const AdminLayout = ({ children }) => {
           </div>
         </header>{" "}
         {/* Page content */}
-        <main>{children}</main>
+        <main className="flex-1 bg-gray-50"> {/* Added flex-1 and bg-gray-50 for consistency if needed */}
+          {children}
+        </main>
       </div>
     </div>
   );

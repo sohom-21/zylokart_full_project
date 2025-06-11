@@ -9,7 +9,7 @@ import LatestOrders from '@/app/components/admin/LatestOrders'
 export default function AdminDashboard() {
   return (
     <AdminLayout>
-      <div className="p-6 space-y-8">
+      <div className="p-6 space-y-6">
         {/* Stats Cards */}
         <StatsCards />
         
