@@ -1,7 +1,10 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
+import { useEffect } from 'react'
+import { insertUser } from '@/app/utiils/supabase/user_data'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -22,9 +25,14 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm({ onSubmit }) {
+export default function UserForm() {
+  const router = useRouter()
+  // Fetch user_id from localStorage
+  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
+
   const formik = useFormik({
     initialValues: {
+      user_id: userId || '',
       name: '',
       email: '',
       phone: '',
@@ -35,10 +43,16 @@ export default function UserForm({ onSubmit }) {
       is_active: true,
     },
     validationSchema,
-    onSubmit: (values, { setSubmitting, resetForm }) => {
-      onSubmit?.(values)
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      // Insert user data into Users table
+      const { data, error } = await insertUser(values)
       setSubmitting(false)
-      // resetForm()
+      if (!error) {
+        // Redirect to homepage or dashboard after successful insert
+        router.push('/customer/homepage')
+      } else {
+        alert('Error saving profile: ' + error.message)
+      }
     },
   })
 
@@ -53,6 +67,21 @@ export default function UserForm({ onSubmit }) {
       <h2 className="text-3xl font-bold text-center mb-4 text-zinc-800 flex items-center justify-center gap-2">
         <User className="text-indigo-500 animate-bounce" size={32} /> Complete Your Profile
       </h2>
+
+      {/* User ID (read-only) */}
+      <div>
+        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
+          User ID
+        </label>
+        <input
+          type="text"
+          name="user_id"
+          value={formik.values.user_id}
+          readOnly
+          disabled
+          className="w-full px-4 py-3 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed focus:outline-none"
+        />
+      </div>
 
       {/* Name */}
       <div>
