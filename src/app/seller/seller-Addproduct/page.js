@@ -119,7 +119,7 @@ export default function SellerAddProduct() {
   return (
     <div className="bg-white min-h-screen w-full flex flex-col">
       <SellerNavbar />
-      <div className="flex flex-1 pt-16">
+      <div className="flex flex-1 pt-14">
         <SellerDashboardSidebar />
         <main className="flex-1 px-8 py-10">
           <div className="max-w-2xl mx-auto">
