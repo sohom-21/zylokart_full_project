@@ -101,11 +101,11 @@ export default function CompaniesPage() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-      <div className="flex-1 flex flex-col space-y-6 p-6 bg-gray-50">
+      <div className="flex-1 flex flex-col">
         {/* Navbar/Header */}
         <AdminLayout onSidebarOpen={() => setSidebarCollapsed(false)}>
           {/* All actual data below navbar */}
-          <div className="space-y-6 mt-6">
+          <div className="space-y-6 p-4">
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>

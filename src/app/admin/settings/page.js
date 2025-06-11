@@ -36,9 +36,9 @@ export default function SettingsPage() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
-      <div className="flex-1 flex flex-col pl-4">
+      <div className="flex-1 flex flex-col">
         <AdminLayout onSidebarOpen={() => setSidebarCollapsed(false)}>
-          <div className="space-y-6">
+          <div className="space-y-6 p-4">
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
