@@ -12,7 +12,6 @@ export default function SellerNavbar() {
         {/* Logo (Extreme Left) */}
         <div className="flex items-center">
           <Link href="/seller/sellerhomepage" className="flex items-center gap-2 text-2xl font-bold font-['Playfair_Display'] tracking-widest text-white hover:text-amber-400 transition">
-            <span className="bg-amber-500 text-black px-2 py-1 rounded-lg shadow mr-2">ZK</span>
             Zylokart Seller
           </Link>
         </div>

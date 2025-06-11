@@ -44,7 +44,7 @@ export default function SellerDashboard() {
     return (
         <div className="bg-white min-h-screen w-full">
             <SellerNavbar />
-            <div className="pt-16">
+            <div className="pt-14">
                 <div className="flex">
                     {/* Sidebar as component */}
                     <SellerDashboardSidebar />
