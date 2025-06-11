@@ -59,18 +59,18 @@ export default function UserForm() {
   return (
     <form
       onSubmit={formik.handleSubmit}
-      className="max-w-xl mx-auto bg-white rounded-3xl shadow-2xl p-10 space-y-7 border border-zinc-100 animate-fade-in"
-      style={{
-        background: 'radial-gradient(ellipse 80% 60% at 50% 40%, #f5f3ff 60%, #fff 100%)',
-      }}
+      className="w-3xl mx-auto glass-card glass-hover rounded-3xl shadow-2xl p-10 space-y-7 border border-zinc-100 animate-fade-in"
+//       style={{
+//         background: 'radial-gradient(ellipse 74% 136% at 50% 40%, #dfd8ff 60%, #1181ff 100%)',
+//       }}
     >
-      <h2 className="text-3xl font-bold text-center mb-4 text-zinc-800 flex items-center justify-center gap-2">
-        <User className="text-indigo-500 animate-bounce" size={32} /> Complete Your Profile
+      <h2 className="text-3xl font-bold text-center mb-4 text-zinc-100 flex items-center justify-center gap-2">
+        <User className="text-indigo-300 animate-bounce" size={32} /> Complete Your Profile
       </h2>
 
       {/* User ID (read-only) */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
           User ID
         </label>
         <input
@@ -79,14 +79,15 @@ export default function UserForm() {
           value={formik.values.user_id}
           readOnly
           disabled
+          placeholder='User ID will be auto-generated'
           className="w-full px-4 py-3 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed focus:outline-none"
         />
       </div>
 
       {/* Name */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <User className="text-indigo-400" size={18} /> Full Name
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <User className="text-indigo-300" size={18} /> Full Name
         </label>
         <input
           type="text"
@@ -104,8 +105,8 @@ export default function UserForm() {
 
       {/* Email */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <Mail className="text-indigo-400" size={18} /> Email
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <Mail className="text-indigo-300" size={18} /> Email
         </label>
         <input
           type="email"
@@ -123,8 +124,8 @@ export default function UserForm() {
 
       {/* Phone */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <Phone className="text-indigo-400" size={18} /> Phone
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <Phone className="text-indigo-300" size={18} /> Phone
         </label>
         <input
           type="tel"
@@ -142,8 +143,8 @@ export default function UserForm() {
 
       {/* Address */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <MapPin className="text-indigo-400" size={18} /> Address
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <MapPin className="text-indigo-300" size={18} /> Address
         </label>
         <input
           type="text"
@@ -161,8 +162,8 @@ export default function UserForm() {
 
       {/* Area Code */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <Globe className="text-indigo-400" size={18} /> Area Code
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <Globe className="text-indigo-300" size={18} /> Area Code
         </label>
         <input
           type="text"
@@ -180,8 +181,8 @@ export default function UserForm() {
 
       {/* Date of Birth */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <Calendar className="text-indigo-400" size={18} /> Date of Birth
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <Calendar className="text-indigo-300" size={18} /> Date of Birth
         </label>
         <input
           type="date"
@@ -198,8 +199,8 @@ export default function UserForm() {
 
       {/* Role */}
       <div>
-        <label className="flex text-zinc-700 font-medium mb-1 items-center gap-2">
-          <Shield className="text-indigo-400" size={18} /> Role
+        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
+          <Shield className="text-indigo-300" size={18} /> Role
         </label>
         <select
           name="role"
@@ -220,7 +221,7 @@ export default function UserForm() {
 
       {/* Is Active Toggle */}
       <div className="flex items-center gap-3">
-        <span className="text-zinc-700 font-medium flex items-center gap-2">
+        <span className="text-zinc-100 font-medium flex items-center gap-2">
           {formik.values.is_active ? <CheckCircle className="text-green-500" size={18} /> : <XCircle className="text-red-400" size={18} />} Active
         </span>
         <button
