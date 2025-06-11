@@ -1,11 +1,7 @@
 "use client";
 import React from "react";
 import { Bell, Search, ChevronDown, Menu } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/app/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const AdminLayout = ({ children, onSidebarOpen }) => {
   return (
@@ -34,7 +30,7 @@ const AdminLayout = ({ children, onSidebarOpen }) => {
             </button>
             <div className="flex items-center space-x-3">
               <Avatar>
-                <AvatarImage src="/admin-avatar.jpg" />
+                <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>AD</AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
