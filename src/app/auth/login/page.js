@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { signIn } from '@/app/utiils/supabase/auth'
 import { Toaster, toast } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -14,6 +15,7 @@ export default function Login() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter();
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target
@@ -36,6 +38,7 @@ export default function Login() {
         setMessage('Login successful! Redirecting...')
         toast.success('Login successful! Redirecting...')
         // Optionally redirect to a dashboard or home page
+        router.push('/customer/homepage')
         // window.location.href = '/dashboard'
       }
     } catch(error) {
