@@ -39,7 +39,7 @@ export default function UserForm() {
       address: '',
       area_code: '',
       dob: '',
-      role: '',
+      role: 'user',
       is_active: true,
     },
     validationSchema,
