@@ -28,6 +28,7 @@ export default function Sellersidebar() {
     pathname === '/seller/seller-productlistings' ||
     pathname === '/seller/seller-Addproduct' ||
     pathname === '/seller/products' ||
+    pathname === '/seller/product-list' ||
     pathname.startsWith('/seller/products');
 
   return (
@@ -81,12 +82,12 @@ export default function Sellersidebar() {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <Link href="/seller/seller-productlistings">
+              <Link href="/seller/product-list">
                 <div className={`px-4 py-2 text-xs flex items-center gap-2 rounded-t-lg cursor-pointer
-                  ${pathname === '/seller/seller-productlistings'
+                  ${pathname === '/seller/product-list'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}>
-                  <HiOutlineClipboardList size={16} className={`${pathname === '/seller/seller-productlistings' ? 'text-white' : 'text-gray-400'}`} />
+                  <HiOutlineClipboardList size={16} className={`${pathname === '/seller/product-list' ? 'text-white' : 'text-gray-400'}`} />
                   Product Listings
                 </div>
               </Link>
@@ -102,21 +103,21 @@ export default function Sellersidebar() {
             </div>
           )}
         </div>
-        <Link href="/seller/orders">
+        <Link href="/seller/Orders">
           <div className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-1 cursor-pointer gap-3
-            ${pathname === '/seller/orders'
+            ${pathname.toLowerCase() === '/seller/orders'
               ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}>
-            <HiOutlineClipboardList size={20} className={`${pathname === '/seller/orders' ? 'text-white' : 'text-gray-400'}`} />
+            <HiOutlineClipboardList size={20} className={`${pathname.toLowerCase() === '/seller/orders' ? 'text-white' : 'text-gray-400'}`} />
             {!collapsed && <span>Orders</span>}
           </div>
         </Link>
-        <Link href="/seller/account">
+        <Link href="/seller/Account">
           <div className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-1 cursor-pointer gap-3
-            ${pathname === '/seller/account'
+            ${pathname.toLowerCase() === '/seller/account'
               ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}>
-            <HiOutlineUser size={20} className={`${pathname === '/seller/account' ? 'text-white' : 'text-gray-400'}`} />
+            <HiOutlineUser size={20} className={`${pathname.toLowerCase() === '/seller/account' ? 'text-white' : 'text-gray-400'}`} />
             {!collapsed && <span>My Account</span>}
           </div>
         </Link>
