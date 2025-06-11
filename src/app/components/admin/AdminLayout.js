@@ -39,36 +39,35 @@ const AdminLayout = ({ children }) => {
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         </div>
       )}      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-900 shadow-lg transform transition-all duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0 lg:static lg:inset-0 ${
         sidebarCollapsed ? 'lg:w-16' : 'lg:w-64'
       } w-64`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-6 border-b border-slate-700">
           {!sidebarCollapsed && (
-            <h1 className="text-xl font-bold text-gray-900">ZyloKart Admin</h1>
+            <h1 className="text-xl font-bold text-white">ZyloKart Admin</h1>
           )}
           <div className="flex items-center space-x-2">
             <button
-              className="hidden lg:block p-1 rounded-lg hover:bg-gray-100"
+              className="hidden lg:block p-1 rounded-lg hover:bg-slate-800"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             >
               {sidebarCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-gray-600" />
+                <ChevronRight className="h-5 w-5 text-gray-300" />
               ) : (
-                <ChevronLeft className="h-5 w-5 text-gray-600" />
+                <ChevronLeft className="h-5 w-5 text-gray-300" />
               )}
             </button>
             <button
-              className="lg:hidden p-1 rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-1 rounded-lg hover:bg-slate-800"
               onClick={() => setSidebarOpen(false)}
             >
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6 text-gray-300" />
             </button>
           </div>
         </div>
-        
-        <nav className="mt-8 px-4">
+          <nav className="mt-8 px-4">
           {navigation.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
@@ -78,8 +77,8 @@ const AdminLayout = ({ children }) => {
                 href={item.href}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-2 ${
                   isActive
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-300 hover:bg-slate-800 hover:text-white'
                 }`}
                 title={sidebarCollapsed ? item.name : ''}
               >
@@ -93,15 +92,15 @@ const AdminLayout = ({ children }) => {
         {/* User section at bottom */}
         {!sidebarCollapsed && (
           <div className="absolute bottom-6 left-4 right-4">
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-slate-800 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src="/admin-avatar.jpg" />
-                  <AvatarFallback className="text-sm">AD</AvatarFallback>
+                  <AvatarFallback className="text-sm bg-blue-600 text-white">AD</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">Admin User</p>
-                  <p className="text-xs text-gray-500 truncate">Premium Plan</p>
+                  <p className="text-sm font-medium text-white truncate">Admin User</p>
+                  <p className="text-xs text-gray-400 truncate">Premium Plan</p>
                 </div>
               </div>
             </div>
@@ -152,10 +151,8 @@ const AdminLayout = ({ children }) => {
               </div>
             </div>
           </div>
-        </header>
-
-        {/* Page content */}
-        <main className="p-6">
+        </header>        {/* Page content */}
+        <main>
           {children}
         </main>
       </div>

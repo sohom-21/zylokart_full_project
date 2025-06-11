@@ -25,12 +25,11 @@ const TrafficChart = () => {
     },
     cutout: '70%',
   }
-
   const data = {
-    labels: ['Desktop', 'Mobile', 'Tablet'],
+    labels: ['Desktop', 'Tablet', 'Phone'],
     datasets: [
       {
-        data: [63, 25, 12],
+        data: [63, 15, 22],
         backgroundColor: [
           '#3b82f6',
           '#10b981',
@@ -41,19 +40,17 @@ const TrafficChart = () => {
     ],
   }
 
-  const totalVisitors = data.datasets[0].data.reduce((a, b) => a + b, 0)
-
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Traffic Source</h3>
       </div>
       
-      <div className="relative h-64 mb-4">
+      <div className="relative h-48 mb-6">
         <Doughnut options={options} data={data} />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">{totalVisitors}%</p>
+            <p className="text-2xl font-bold text-gray-900">100%</p>
             <p className="text-sm text-gray-500">Total</p>
           </div>
         </div>

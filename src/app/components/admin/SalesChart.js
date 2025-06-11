@@ -51,10 +51,9 @@ const SalesChart = () => {
         },
         border: {
           display: false,
-        },
-        ticks: {
+        },        ticks: {
           callback: function(value) {
-            return '$' + value + 'k'
+            return value >= 1000 ? (value/1000) + 'k' : value
           }
         }
       },
@@ -62,34 +61,32 @@ const SalesChart = () => {
   }
 
   const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
   const data = {
     labels,
     datasets: [
       {
         label: 'This Year',
-        data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56],
+        data: [20000, 18000, 8000, 12000, 6000, 15000, 14000, 16000, 18000, 20000, 22000, 21000],
         backgroundColor: '#3b82f6',
         borderRadius: 4,
-        barThickness: 20,
+        barThickness: 30,
       },
       {
         label: 'Last Year',
-        data: [45, 49, 60, 61, 36, 35, 20, 45, 49, 60, 61, 36],
+        data: [18000, 16000, 7000, 10000, 5000, 13000, 12000, 14000, 16000, 18000, 19000, 18000],
         backgroundColor: '#e5e7eb',
         borderRadius: 4,
-        barThickness: 20,
+        barThickness: 30,
       },
     ],
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Sales Overview</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Sales</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-500">Total Sales</span>
-          <span className="text-2xl font-bold text-gray-900">$47,890</span>
+          <button className="text-sm text-blue-600 hover:text-blue-700">Sync</button>
         </div>
       </div>
       
