@@ -9,6 +9,11 @@ export async function signUp(email, password, userMeta = {}) {
       data: userMeta,
     },
   });
+  if (data && data.user) {
+  const userId = data.user.id;
+  localStorage.setItem('userId', userId); // Store userId in localStorage for later use
+  // Now you can use userId to insert into your user table
+  }
   return { data, error };
 }  // this is the function to sign up a user returns data and error as object 
 
@@ -17,6 +22,11 @@ export async function signIn(email, password) {
     email,
     password,
   });
+  if (data && data.user) {
+    const userId = data.user.id;
+    localStorage.setItem('userId', userId); // Store userId in localStorage for later use
+    // Now you can use userId to fetch or manipulate user data
+  }
   return { data, error };
 } 
 // this is the function to sign in a user. returns data and error as object
