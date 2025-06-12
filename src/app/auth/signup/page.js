@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { signUp } from '@/app/utiils/supabase/auth'
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 export default function Signup() {
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ export default function Signup() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target
@@ -54,6 +56,7 @@ export default function Signup() {
           confirmPassword: '',
           terms: false,
         })
+        router.push('/customer/profile-details?role=user')
       }
     }
     catch (error) {

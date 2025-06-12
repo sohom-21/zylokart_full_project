@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
@@ -26,6 +26,8 @@ const validationSchema = Yup.object({
 
 export default function UserForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
 
   const formik = useFormik({
@@ -36,7 +38,7 @@ export default function UserForm() {
       phone: '',
       address: '',
       area_code: '',
-      role: 'user',
+      role: fixedRole || 'user', // set from query if present
       is_active: true,
     },
     validationSchema,
@@ -181,7 +183,8 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.role}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.role && formik.errors.role ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white`}
+          className="w-full px-4 py-3 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!!fixedRole} // disables if fixedRole is set
         >
           <option value="">Select role</option>
           {ROLE_OPTIONS.map(opt => (

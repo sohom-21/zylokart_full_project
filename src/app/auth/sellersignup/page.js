@@ -4,9 +4,16 @@ import { useState } from 'react'
 import Navbar from '../../components/Navbars/Navbar-landing'
 import Footer from '../../components/Footer'
 import { createClient } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 export default function SellerSignup() {
+  const router = useRouter()
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -57,6 +64,7 @@ export default function SellerSignup() {
 
       setSuccess(true)
       setForm({ name: '', email: '', password: '', storeName: '' })
+      router.push('/customer/profile-details?role=seller')
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.')
     }
