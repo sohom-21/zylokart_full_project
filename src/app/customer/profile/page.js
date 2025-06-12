@@ -1,16 +1,1 @@
-'use client'
-import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
-import Footer from '@/app/components/Footer'
-import UserForm from '@/app/components/userProfile/userform'
-
-export default function ProfilePage() {
-  return (
-    <div className="min-h-screen flex flex-col custom-bg">
-      <CustomerNavbar />
-      <main className="flex-1 flex flex-col justify-center py-8">
-        <UserForm />
-      </main>
-      <Footer />
-    </div>
-  )
-}
+reghotih3w4rgipohrwioephjw4tgp'ih4wpi4w'pj'pw4gp'4wjp4iwpig4io4wnig4wij4wohgtwgh4twgwu4GWGUGTUW4GUW4GTU4WTGU4WTGU4WGUGGGigigwiUGIgiUGIGIUgiugiugtigiGITGIgwigwTIGItgiwGIwgi4wgitwgiwgiutgig4tiuwgIGTIGIWGG4TWIGWITGI4WGIWGTIUG4WIUGWTIUG4iugwiGI4GWTILGgtlgwLIGwligLIGTLIG4wlgviyfv4iweigviwegigiefwgIGWFIGVifvgivlievleVFIVIVFIVWFVFEWIVIFVIEFWVIEVIVEIVEFIVWFIUYVwuyvfyFVIEVIvfiyvIVIVEIUGWEIUGWQiugqwiugiuwqgiuwqgiwqivqivfiqvfiqvivwfiwvqivfivwqivwiqfviviwvfqivfwviyhevvewVWEIUGERIUEGGWQUGRWIUQGWIFUQWQGUFGIUWGIFGWIGWIFUWQIUWFQIGWQIGGWIGWQIGWIFGIWGFQIUGFGWFQIUGFQIUGWFQIGWFQIUGIWFQGIGIGIGIGWIQGIUQGIRGWIGWQIGRIGWQIRGIWGQIRGWQIGWQIRGIWQGIRGIGWRQIGRQIGWIQUG

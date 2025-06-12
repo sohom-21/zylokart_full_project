@@ -1,10 +1,11 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { insertUser } from '@/app/utiils/supabase/user_data'
+import supabase from '@/app/utiils/supabase/client'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -20,35 +21,49 @@ const validationSchema = Yup.object({
   phone: Yup.string().matches(/^[0-9]{10,15}$/, 'Enter a valid phone number').required('Phone is required'),
   address: Yup.string().min(5, 'Too short!').required('Address is required'),
   area_code: Yup.string().min(2, 'Too short!').max(10, 'Too long!').required('Area code is required'),
-  dob: Yup.date().max(new Date(), 'DOB cannot be in the future').required('Date of birth is required'),
   role: Yup.string().oneOf(['admin', 'user', 'guest', 'seller', 'logistics'], 'Select a valid role').required('Role is required'),
   is_active: Yup.boolean(),
 })
 
 export default function UserForm() {
   const router = useRouter()
-  // Fetch user_id from localStorage
+  const searchParams = useSearchParams()
+  const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
 
+  const [initialValues, setInitialValues] = useState({
+    user_id: userId || '',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    area_code: '',
+    role: fixedRole || 'user',
+    is_active: true,
+  })
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data, error } = await supabase.auth.getUser()
+      if (data?.user) {
+        setInitialValues(prev => ({
+          ...prev,
+          email: data.user.email || '',
+          name: data.user.user_metadata?.name || '',
+        }))
+      }
+    }
+    fetchUser()
+  }, [])
+
   const formik = useFormik({
-    initialValues: {
-      user_id: userId || '',
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      area_code: '',
-      dob: '',
-      role: 'user',
-      is_active: true,
-    },
+    initialValues,
+    enableReinitialize: true, // important!
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      // Insert user data into Users table
       const { data, error } = await insertUser(values)
       setSubmitting(false)
       if (!error) {
-        // Redirect to homepage or dashboard after successful insert
         router.push('/customer/homepage')
       } else {
         alert('Error saving profile: ' + error.message)
@@ -59,10 +74,7 @@ export default function UserForm() {
   return (
     <form
       onSubmit={formik.handleSubmit}
-      className="w-3xl mx-auto glass-card glass-hover rounded-3xl shadow-2xl p-10 space-y-7 border border-zinc-100 animate-fade-in"
-//       style={{
-//         background: 'radial-gradient(ellipse 74% 136% at 50% 40%, #dfd8ff 60%, #1181ff 100%)',
-//       }}
+      className="max-w-2xl w-full mx-auto glass-card glass-hover rounded-3xl shadow-2xl p-10 space-y-7 border border-zinc-100 animate-fade-in"
     >
       <h2 className="text-3xl font-bold text-center mb-4 text-zinc-100 flex items-center justify-center gap-2">
         <User className="text-indigo-300 animate-bounce" size={32} /> Complete Your Profile
@@ -79,8 +91,8 @@ export default function UserForm() {
           value={formik.values.user_id}
           readOnly
           disabled
-          placeholder='User ID will be auto-generated'
-          className="w-full px-4 py-3 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed focus:outline-none"
+          placeholder="User ID will be auto-generated"
+          className="w-full px-4 py-3 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-500 placeholder-zinc-400 cursor-not-allowed focus:outline-none"
         />
       </div>
 
@@ -95,7 +107,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.name}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.name && formik.errors.name ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.name && formik.errors.name ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your full name"
         />
         {formik.touched.name && formik.errors.name && (
@@ -114,7 +126,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.email && formik.errors.email ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.email && formik.errors.email ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your email"
         />
         {formik.touched.email && formik.errors.email && (
@@ -133,7 +145,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.phone}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.phone && formik.errors.phone ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.phone && formik.errors.phone ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your phone number"
         />
         {formik.touched.phone && formik.errors.phone && (
@@ -152,7 +164,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.address}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.address && formik.errors.address ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.address && formik.errors.address ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your address"
         />
         {formik.touched.address && formik.errors.address && (
@@ -171,29 +183,11 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.area_code}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.area_code && formik.errors.area_code ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.area_code && formik.errors.area_code ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your area code"
         />
         {formik.touched.area_code && formik.errors.area_code && (
           <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><XCircle size={14} />{formik.errors.area_code}</div>
-        )}
-      </div>
-
-      {/* Date of Birth */}
-      <div>
-        <label className="flex text-zinc-100 font-medium mb-1 items-center gap-2">
-          <Calendar className="text-indigo-300" size={18} /> Date of Birth
-        </label>
-        <input
-          type="date"
-          name="dob"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.dob}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.dob && formik.errors.dob ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200`}
-        />
-        {formik.touched.dob && formik.errors.dob && (
-          <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><XCircle size={14} />{formik.errors.dob}</div>
         )}
       </div>
 
@@ -207,7 +201,8 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.role}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.role && formik.errors.role ? 'border-red-400' : 'border-zinc-200'} focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white`}
+          className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!!fixedRole} // disables if fixedRole is set
         >
           <option value="">Select role</option>
           {ROLE_OPTIONS.map(opt => (
