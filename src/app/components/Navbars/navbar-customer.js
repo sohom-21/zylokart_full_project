@@ -17,9 +17,9 @@ export default function CustomerNavbar() {
       {/* Logo */}
       <Link
         href="/"
-        className="text-2xl font-bold font-['Playfair_Display'] tracking-widest text-white"
+        className="flex items-center"
       >
-        Zylokart
+        <img src="/Logo.gif" alt="Zylokart" className="h-15 w-auto" />
       </Link>
       {/* Main Nav */}
       <div className="hidden md:flex gap-8">
