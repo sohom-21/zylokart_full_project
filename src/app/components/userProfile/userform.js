@@ -4,6 +4,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { insertUser } from '@/app/utiils/supabase/user_data'
 import supabase from '@/app/utiils/supabase/client'
 
@@ -30,6 +31,7 @@ export default function UserForm() {
   const searchParams = useSearchParams()
   const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
+  const supabase = createClientComponentClient();
 
   const [initialValues, setInitialValues] = useState({
     user_id: userId || '',
@@ -43,18 +45,39 @@ export default function UserForm() {
   })
 
   useEffect(() => {
-    async function fetchUser() {
-      const { data, error } = await supabase.auth.getUser()
-      if (data?.user) {
-        setInitialValues(prev => ({
-          ...prev,
-          email: data.user.email || '',
-          name: data.user.user_metadata?.name || '',
-        }))
+    const handleFetchUserDetails = async () => {
+      try {
+        // 1. Get the current user's session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          throw new Error('User is not authenticated');
+        }
+
+        const userIdToFetch = session.user.id;
+
+        // 2. Invoke the Edge Function (replace 'get-user-details' with your deployed function name)
+        const { data, error } = await supabase.functions.invoke('get-user-details', {
+          method: 'POST',
+          body: { targetUserId: userIdToFetch },
+        });
+
+        if (error) throw error;
+
+        if (data) {
+          setInitialValues(prev => ({
+            ...prev,
+            email: data.email || '',
+            name: data.DisplayName || '',
+          }))
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error.message);
       }
-    }
-    fetchUser()
-  }, [])
+    };
+
+    handleFetchUserDetails();
+  }, []);
 
   const formik = useFormik({
     initialValues,
