@@ -1,29 +1,25 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { HiOutlineViewGrid, HiOutlineCreditCard, HiOutlineCube, HiOutlineClipboardList, HiOutlineUser, HiOutlineChevronDoubleLeft, HiOutlineChevronDoubleRight } from 'react-icons/hi'
 
 export default function Sellersidebar() {
   const pathname = usePathname();
-  const [showProductsMenu, setShowProductsMenu] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const hideTimeout = useRef(null);
+  const [productsOpen, setProductsOpen] = useState(false);
 
-  // Show menu immediately on mouse enter
-  const handleMouseEnter = () => {
-    if (hideTimeout.current) clearTimeout(hideTimeout.current);
-    setShowProductsMenu(true);
-  };
+  // On mount, read productsOpen from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('sellerSidebarProductsOpen');
+    if (stored === 'true') setProductsOpen(true);
+  }, []);
 
-  // Hide menu after 2 seconds on mouse leave
-  const handleMouseLeave = () => {
-    hideTimeout.current = setTimeout(() => {
-      setShowProductsMenu(false);
-    }, 2000);
-  };
+  // Whenever productsOpen changes, store it
+  useEffect(() => {
+    localStorage.setItem('sellerSidebarProductsOpen', productsOpen);
+  }, [productsOpen]);
 
-  // Helper for active state on dropdown
   const isProductsActive =
     pathname === '/seller/seller-productlistings' ||
     pathname === '/seller/seller-Addproduct' ||
@@ -61,29 +57,29 @@ export default function Sellersidebar() {
             {!collapsed && <span>Payments</span>}
           </div>
         </Link>
-        {/* Products menu with hover dropdown and delayed close */}
-        <div
-          className="relative"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
+        {/* Products menu with click dropdown */}
+        <div className="relative">
           <div
             className={`flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors mb-1 cursor-pointer gap-3
-              ${isProductsActive
+              ${isProductsActive || productsOpen
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}
+            onClick={() => setProductsOpen(open => !open)}
           >
-            <HiOutlineCube size={20} className={`${isProductsActive ? 'text-white' : 'text-gray-400'}`} />
+            <HiOutlineCube size={20} className={`${isProductsActive || productsOpen ? 'text-white' : 'text-gray-400'}`} />
             {!collapsed && <span className="flex-1">Products</span>}
-            {!collapsed && <span className="ml-2">&#9662;</span>}
+            {!collapsed && (
+              <span className="ml-2 text-white">
+                {productsOpen ? <span>&#9650;</span> : <span>&#9660;</span>}
+                {/* ▲ (up) when open, ▼ (down) when closed */}
+              </span>
+            )}
           </div>
-          {showProductsMenu && !collapsed && (
-            <div className="absolute left-0 top-full mt-1 bg-slate-900 rounded-lg shadow-lg z-10 w-48 border border-slate-700"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
+          {/* Dropdown options */}
+          {productsOpen && !collapsed && (
+            <div className="ml-8 mt-1 flex flex-col gap-1">
               <Link href="/seller/product-list">
-                <div className={`px-4 py-2 text-xs flex items-center gap-2 rounded-t-lg cursor-pointer
+                <div className={`px-4 py-2 text-xs flex items-center gap-2 rounded-lg cursor-pointer
                   ${pathname === '/seller/product-list'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}>
@@ -92,7 +88,7 @@ export default function Sellersidebar() {
                 </div>
               </Link>
               <Link href="/seller/seller-Addproduct">
-                <div className={`px-4 py-2 text-xs flex items-center gap-2 rounded-b-lg cursor-pointer
+                <div className={`px-4 py-2 text-xs flex items-center gap-2 rounded-lg cursor-pointer
                   ${pathname === '/seller/seller-Addproduct'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-slate-800 hover:text-white'}`}>
