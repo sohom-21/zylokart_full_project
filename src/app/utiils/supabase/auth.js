@@ -10,6 +10,7 @@ export async function signUp(email, password, userMeta = {}) {
     },
   });
   if (data && data.user) {
+  console.log(data);
   const userId = data.user.id;
   localStorage.setItem('userId', userId); // Store userId in localStorage for later use
   }
@@ -24,6 +25,7 @@ export async function signIn(email, password) {
     password,
   });
   if (data && data.user) {
+    console.log(data);
     const userId = data.user.id;
     localStorage.setItem('userId', userId); // Store userId in localStorage for later use
     // Store access token in localStorage
