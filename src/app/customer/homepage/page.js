@@ -14,10 +14,9 @@ export default function Homepage() {
 
   const fetchSession = async () => {
       try {
-        const res = await supabase.auth.getSession();
-        if (res.ok) {
-          const sessionData = await res.json();
-          setSession(sessionData);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (session) {
+          setSession(session);
         } else {
           setSession(null);
         }

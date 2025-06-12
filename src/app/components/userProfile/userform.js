@@ -24,7 +24,7 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm({ userId: propUserId }) {
+export default function UserForm({ userId: propUserId, onNext }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
@@ -50,7 +50,11 @@ export default function UserForm({ userId: propUserId }) {
       const { data, error } = await insertUser(values)
       setSubmitting(false)
       if (!error) {
-        router.push('/customer/homepage')
+        if (onNext && data && data.length > 0) {
+          onNext(data[0].user_id) // Assuming insertUser returns the inserted user data with user_id
+        } else {
+          router.push('/customer/homepage')
+        }
       } else {
         alert('Error saving profile: ' + error.message)
       }

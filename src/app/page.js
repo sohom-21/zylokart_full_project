@@ -11,12 +11,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
 
-  const userSession = supabase.auth.getSession().then(({ data }) => data.session);
   useEffect(() => {
-    userSession.then(sessionData => {
-      setSession(sessionData);
-    });
-  }, [userSession]);
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    fetchSession();
+  }, []);
 
   useEffect(() => {
     // Replace these URLs with your backend endpoints

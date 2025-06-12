@@ -11,12 +11,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation";
+import { signOut } from "@/app/utiils/supabase/auth";
+import supabase from "@/app/utiils/supabase/client";
+
 
 export default function CustomerNavbar() {
   const router = useRouter();
   
   const handleProfileClick = () => {
     router.push("/customer/profile");
+  };
+  const handleUserlogout = async ()  => {
+    const userSession = await supabase.auth.getSession();
+    signOut();
+    router.push("/");
   };
 
 
@@ -91,6 +99,7 @@ export default function CustomerNavbar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
             <DropdownMenuItem>Your orders</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleUserlogout}>LogoOut</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

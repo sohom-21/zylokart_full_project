@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState, useEffect } from 'react'
 import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-import { getUserById, updateUserById, insertUser } from '@/app/utiils/supabase/user_data'
+import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_data'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -221,7 +221,7 @@ export default function UserForm({ userId: propUserId, isEdit }) {
           onBlur={formik.handleBlur}
           value={formik.values.role}
           className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!!fixedRole}
+          disabled={!fixedRole}
         >
           <option value="">Select role</option>
           {ROLE_OPTIONS.map(opt => (
