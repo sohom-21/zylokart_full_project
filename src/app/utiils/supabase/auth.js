@@ -10,12 +10,14 @@ export async function signUp(email, password, userMeta = {}) {
     },
   });
   if (data && data.user) {
+  console.log(data);
   const userId = data.user.id;
   localStorage.setItem('userId', userId); // Store userId in localStorage for later use
-  // Now you can use userId to insert into your user table
   }
   return { data, error };
 }  // this is the function to sign up a user returns data and error as object 
+
+
 
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -23,19 +25,24 @@ export async function signIn(email, password) {
     password,
   });
   if (data && data.user) {
+    console.log(data);
     const userId = data.user.id;
     localStorage.setItem('userId', userId); // Store userId in localStorage for later use
-    // Now you can use userId to fetch or manipulate user data
+    // Store access token in localStorage
   }
   return { data, error };
 } 
 // this is the function to sign in a user. returns data and error as object
+
+
 
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   return { error };
 } 
 // this is the signout function .... will implement it later
+
+
 
 export async function resetPassword(email) {
   const { data, error } = await supabase.auth.resetPasswordForEmail(email,{

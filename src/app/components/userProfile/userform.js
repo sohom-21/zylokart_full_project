@@ -41,18 +41,30 @@ export default function UserForm() {
     role: fixedRole || 'user',
     is_active: true,
   })
+  
+  async function fetchUserData(userId) {
+  const response = await fetch('https://grddgeupgfimxapbsjqo.supabase.co/functions/v1/get-user-data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer YOUR_ACCESS_TOKEN` // Replace with your actual access token if needed
+    },
+    body: JSON.stringify({ userId }) // Send the userId in the request body
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('Error fetching user data:', errorData.error);
+    return null; // Handle error as needed
+  }
+
+  const data = await response.json();
+  console.log('Fetched user data:', data);
+  return data; // Return the user data
+}
+
 
   useEffect(() => {
-    async function fetchUser() {
-      const { data, error } = await supabase.auth.getUser()
-      if (data?.user) {
-        setInitialValues(prev => ({
-          ...prev,
-          email: data.user.email || '',
-          name: data.user.user_metadata?.name || '',
-        }))
-      }
-    }
     fetchUser()
   }, [])
 
