@@ -2,9 +2,9 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-import { insertUser } from '@/app/utiils/supabase/user_data'
+import { getUserById, updateUserById, insertUser } from '@/app/utiils/supabase/user_data'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -24,14 +24,14 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm({ userId: propUserId }) {
+export default function UserForm({ userId: propUserId, isEdit }) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
+  const fixedRole = searchParams.get('role')
   const localUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
   const userId = propUserId || localUserId
 
-  const [initialValues] = useState({
+  const [initialValues, setInitialValues] = useState({
     user_id: userId || '',
     name: '',
     email: '',
@@ -41,14 +41,43 @@ export default function UserForm({ userId: propUserId }) {
     role: fixedRole || 'user',
     is_active: true,
   })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchUser() {
+      if (!userId) return setLoading(false)
+      const { data, error } = await getUserById(userId)
+      if (data) {
+        setInitialValues({
+          user_id: data.user_id,
+          name: data.name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          address: data.address || '',
+          area_code: data.area_code || '',
+          role: data.role || fixedRole || 'user',
+          is_active: data.is_active ?? true,
+        })
+      }
+      setLoading(false)
+    }
+    fetchUser()
+  }, [userId, fixedRole])
 
   const formik = useFormik({
     initialValues,
-    enableReinitialize: true, // important!
+    enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      const { data, error } = await insertUser(values)
+      setSubmitting(true)
+      let result
+      if (isEdit) {
+        result = await updateUserById(userId, values)
+      } else {
+        result = await insertUser(values)
+      }
       setSubmitting(false)
+      const { error } = result
       if (!error) {
         router.push('/customer/homepage')
       } else {
@@ -56,6 +85,10 @@ export default function UserForm({ userId: propUserId }) {
       }
     },
   })
+
+  if (loading) {
+    return <div className="text-center py-10 text-lg text-zinc-500">Loading profile...</div>
+  }
 
   return (
     <form
