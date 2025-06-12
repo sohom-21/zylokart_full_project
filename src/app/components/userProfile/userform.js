@@ -1,12 +1,13 @@
 'use client'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
+import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleRight, ToggleLeft, CheckCircle, XCircle, Calendar } from 'lucide-react' // Added Calendar for consistency
 import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { insertUser } from '@/app/utiils/supabase/user_data'
-import supabase from '@/app/utiils/supabase/client'
+// REMOVED: import supabase from '@/app/utiils/supabase/client' - This caused the conflict.
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -29,12 +30,14 @@ const validationSchema = Yup.object({
 export default function UserForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
-  const supabase = createClientComponentClient();
+  const fixedRole = searchParams.get('role')
 
+  // Use the ONLY Supabase client instance needed for this component.
+  const supabase = createClientComponentClient()
+
+  const [isLoading, setIsLoading] = useState(true) // Add a loading state
   const [initialValues, setInitialValues] = useState({
-    user_id: userId || '',
+    user_id: '',
     name: '',
     email: '',
     phone: '',
@@ -45,46 +48,49 @@ export default function UserForm() {
   })
 
   useEffect(() => {
-    const handleFetchUserDetails = async () => {
-      try {
-        // 1. Get the current user's session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const fetchAndSetUserData = async () => {
+      // 1. Get the current user's session. This is the source of truth.
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
-        if (sessionError || !session) {
-          throw new Error('User is not authenticated');
-        }
-
-        const userIdToFetch = session.user.id;
-
-        // 2. Invoke the Edge Function (replace 'get-user-details' with your deployed function name)
-        const { data, error } = await supabase.functions.invoke('get-user-details', {
-          method: 'POST',
-          body: { targetUserId: userIdToFetch },
-        });
-
-        if (error) throw error;
-
-        if (data) {
-          setInitialValues(prev => ({
-            ...prev,
-            email: data.email || '',
-            name: data.DisplayName || '',
-          }))
-        }
-      } catch (error) {
-        console.error('Error fetching user details:', error.message);
+      if (sessionError || !session) {
+        console.error('Authentication error or no session found:', sessionError?.message)
+        setIsLoading(false)
+        // Optionally redirect to login if no session is found
+        // router.push('/auth/login') // You might want to enable this
+        return
       }
-    };
 
-    handleFetchUserDetails();
-  }, []);
+      const user = session.user
+
+      // We don't need to call the Edge Function to get the user's own email and name.
+      // This data is already available in the session object after login/signup!
+      // This is more efficient and avoids an extra network request.
+      setInitialValues({
+        user_id: user.id, // The correct user ID from the session
+        email: user.email || '',
+        name: user.user_metadata.full_name || user.user_metadata.name || '', // Get name from metadata (full_name is common, also checking 'name')
+        phone: '', // These will be empty initially, user fills them
+        address: '',
+        area_code: '',
+        role: fixedRole || user.user_metadata.role || 'user', // Get role from metadata if available, else default
+        is_active: true,
+      })
+
+      setIsLoading(false)
+    }
+
+    fetchAndSetUserData()
+  }, [supabase, router, fixedRole]) // Added dependencies
 
   const formik = useFormik({
     initialValues,
-    enableReinitialize: true, // important!
+    enableReinitialize: true,
     validationSchema,
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
-      const { data, error } = await insertUser(values)
+    onSubmit: async (values, { setSubmitting }) => {
+      // The 'insertUser' function should be designed to handle both inserts and updates (UPSERT)
+      // For now, we assume it inserts. If it needs to update, you might pass the user_id
+      // or the function itself handles UPSERT logic based on user_id.
+      const { data, error } = await insertUser({ ...values, user_id: initialValues.user_id }) // Ensure user_id is passed
       setSubmitting(false)
       if (!error) {
         router.push('/customer/homepage')
@@ -93,6 +99,11 @@ export default function UserForm() {
       }
     },
   })
+
+  // Show a loading spinner or skeleton while fetching user data
+  if (isLoading) {
+    return <div className="text-center text-white p-10">Loading profile...</div>
+  }
 
   return (
     <form
@@ -224,12 +235,12 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.role}
-          className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed bg-zinc-700 border-zinc-600" // Adjusted for dark theme aesthetics
           disabled={!!fixedRole} // disables if fixedRole is set
         >
-          <option value="">Select role</option>
+          <option value="" className="text-zinc-400">Select role</option>
           {ROLE_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value} className="text-white bg-zinc-700">{opt.label}</option>
           ))}
         </select>
         {formik.touched.role && formik.errors.role && (
