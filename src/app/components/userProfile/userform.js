@@ -1,11 +1,18 @@
 'use client'
+import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { useEffect, useState } from 'react'
+import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
+import { insertUser } from '@/app/utiils/supabase/user_data'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { insertUser } from '@/app/utiils/supabase/user_data'
-import supabase from '@/app/utiils/supabase/client'
+// import supabase from '@/app/utiils/supabase/client'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -25,14 +32,15 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm() {
+export default function UserForm({ accessToken, userId: propUserId }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
+  const localUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
+  const userId = propUserId || localUserId
 
   const [initialValues, setInitialValues] = useState({
-    user_id: userId || '',
+    user_id: propUserId || '',
     name: '',
     email: '',
     phone: '',
@@ -41,32 +49,40 @@ export default function UserForm() {
     role: fixedRole || 'user',
     is_active: true,
   })
-  
-  async function fetchUserData(userId) {
-  const response = await fetch('https://grddgeupgfimxapbsjqo.supabase.co/functions/v1/get-user-data', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer YOUR_ACCESS_TOKEN` // Replace with your actual access token if needed
-    },
-    body: JSON.stringify({ userId }) // Send the userId in the request body
-  });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Error fetching user data:', errorData.error);
-    return null; // Handle error as needed
+  async function fetchUserData(userId, accessToken) {
+    const response = await fetch('https://grddgeupgfimxapbsjqo.supabase.co/functions/v1/get-user-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ userId }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Error fetching user data:', errorData.error)
+      return null
+    }
+
+    const data = await response.json()
+    return data
   }
 
-  const data = await response.json();
-  console.log('Fetched user data:', data);
-  return data; // Return the user data
-}
-
-
   useEffect(() => {
-    fetchUser()
-  }, [])
+    if (accessToken && propUserId) {
+      fetchUserData(propUserId, accessToken).then(result => {
+        if (result) {
+          setInitialValues(prev => ({
+            ...prev,
+            email: result.email || '',
+            name: result.DisplayName || '',
+          }))
+        }
+      })
+    }
+  }, [accessToken, propUserId, fixedRole])
 
   const formik = useFormik({
     initialValues,
