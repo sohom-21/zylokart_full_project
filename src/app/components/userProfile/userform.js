@@ -2,10 +2,9 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { insertUser } from '@/app/utiils/supabase/user_data'
-// import supabase from '@/app/utiils/supabase/client'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -25,14 +24,14 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm({ accessToken, userId: propUserId }) {
+export default function UserForm({ userId: propUserId }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
   const localUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
   const userId = propUserId || localUserId
 
-  const [initialValues, setInitialValues] = useState({
+  const [initialValues] = useState({
     user_id: userId || '',
     name: '',
     email: '',
@@ -42,40 +41,6 @@ export default function UserForm({ accessToken, userId: propUserId }) {
     role: fixedRole || 'user',
     is_active: true,
   })
-
-  async function fetchUserData(userId, accessToken) {
-    const response = await fetch('https://grddgeupgfimxapbsjqo.supabase.co/functions/v1/get-user-data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ userId }),
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Error fetching user data:', errorData.error)
-      return null
-    }
-
-    const data = await response.json()
-    return data
-  }
-
-  useEffect(() => {
-    if (accessToken && propUserId) {
-      fetchUserData(propUserId, accessToken).then(result => {
-        if (result) {
-          setInitialValues(prev => ({
-            ...prev,
-            email: result.email || '',
-            name: result.DisplayName || '',
-          }))
-        }
-      })
-    }
-  }, [accessToken, propUserId, fixedRole])
 
   const formik = useFormik({
     initialValues,
@@ -223,7 +188,7 @@ export default function UserForm({ accessToken, userId: propUserId }) {
           onBlur={formik.handleBlur}
           value={formik.values.role}
           className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!!fixedRole} // disables if fixedRole is set
+          disabled={!!fixedRole}
         >
           <option value="">Select role</option>
           {ROLE_OPTIONS.map(opt => (
