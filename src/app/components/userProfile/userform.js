@@ -1,16 +1,9 @@
 'use client'
-import { useRouter } from 'next/navigation'
-import { useSearchParams } from 'next/navigation'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { useEffect, useState } from 'react'
-import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-import { insertUser } from '@/app/utiils/supabase/user_data'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { insertUser } from '@/app/utiils/supabase/user_data'
 // import supabase from '@/app/utiils/supabase/client'
 
@@ -40,7 +33,7 @@ export default function UserForm({ accessToken, userId: propUserId }) {
   const userId = propUserId || localUserId
 
   const [initialValues, setInitialValues] = useState({
-    user_id: propUserId || '',
+    user_id: userId || '',
     name: '',
     email: '',
     phone: '',
