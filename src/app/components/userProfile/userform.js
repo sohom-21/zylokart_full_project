@@ -3,8 +3,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { User, Mail, Phone, Calendar, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { insertUser } from '@/app/utiils/supabase/user_data'
+import supabase from '@/app/utiils/supabase/client'
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin' },
@@ -30,17 +31,34 @@ export default function UserForm() {
   const fixedRole = searchParams.get('role') // 'user', 'seller', etc.
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
 
+  const [initialValues, setInitialValues] = useState({
+    user_id: userId || '',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    area_code: '',
+    role: fixedRole || 'user',
+    is_active: true,
+  })
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data, error } = await supabase.auth.getUser()
+      if (data?.user) {
+        setInitialValues(prev => ({
+          ...prev,
+          email: data.user.email || '',
+          name: data.user.user_metadata?.name || '',
+        }))
+      }
+    }
+    fetchUser()
+  }, [])
+
   const formik = useFormik({
-    initialValues: {
-      user_id: userId || '',
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      area_code: '',
-      role: fixedRole || 'user', // set from query if present
-      is_active: true,
-    },
+    initialValues,
+    enableReinitialize: true, // important!
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       const { data, error } = await insertUser(values)
@@ -89,7 +107,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.name}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.name && formik.errors.name ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.name && formik.errors.name ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your full name"
         />
         {formik.touched.name && formik.errors.name && (
@@ -108,7 +126,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.email && formik.errors.email ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.email && formik.errors.email ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your email"
         />
         {formik.touched.email && formik.errors.email && (
@@ -127,7 +145,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.phone}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.phone && formik.errors.phone ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.phone && formik.errors.phone ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your phone number"
         />
         {formik.touched.phone && formik.errors.phone && (
@@ -146,7 +164,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.address}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.address && formik.errors.address ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.address && formik.errors.address ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your address"
         />
         {formik.touched.address && formik.errors.address && (
@@ -165,7 +183,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.area_code}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.area_code && formik.errors.area_code ? 'border-red-400' : 'border-zinc-200'} text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
+          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.area_code && formik.errors.area_code ? 'border-red-400' : 'border-zinc-200'} text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200`}
           placeholder="Enter your area code"
         />
         {formik.touched.area_code && formik.errors.area_code && (
@@ -183,7 +201,7 @@ export default function UserForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.role}
-          className="w-full px-4 py-3 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 rounded-lg border text-white disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!!fixedRole} // disables if fixedRole is set
         >
           <option value="">Select role</option>
