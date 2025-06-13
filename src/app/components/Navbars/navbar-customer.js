@@ -24,6 +24,8 @@ export default function CustomerNavbar() {
   const handleUserlogout = async ()  => {
     const userSession = await supabase.auth.getSession();
     signOut();
+    localStorage.removeItem('userSession');
+    localStorage.removeItem("userId");
     router.push("/");
   };
 

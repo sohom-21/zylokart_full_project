@@ -5,16 +5,15 @@ import UserForm from '@/app/components/userProfile/userform'
 
 export default function SellerDetailsPage() {
   const [userId, setUserId] = useState(null)
-  const [currentStep, setCurrentStep] = useState(0) // 1 for UserForm, 2 for SellerForm
+  const [currentStep, setCurrentStep] = useState(1) // 1 for UserForm, 2 for SellerForm
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedUserId = localStorage.getItem('userId')
       setUserId(storedUserId)
-      // If userId exists, assume UserForm is already filled and move to SellerForm
-      if (storedUserId) {
-        setCurrentStep(1)
-      }
+      // Always start at step 1 (UserForm) initially, regardless of storedUserId.
+      // The step will only advance to 2 after handleUserFormSubmit is called.
+      setCurrentStep(1)
     }
   }, [])
 
