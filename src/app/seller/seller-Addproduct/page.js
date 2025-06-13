@@ -30,13 +30,26 @@ const validationSchema = Yup.object({
     "Unsupported file format (PNG, JPG, GIF only)",
     value => value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type)
   ),
-  thumbnailFiles: Yup.array().of(
-    Yup.mixed().nullable().test(
-      "fileType",
-      "Unsupported file format in thumbnails (PNG, JPG, GIF only)",
-      value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
-    )
-  ).max(4, 'You can upload up to 4 thumbnails'),
+  thumbnailFile1: Yup.mixed().nullable().test(
+    "fileType",
+    "Unsupported file format (PNG, JPG, GIF only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+  ),
+  thumbnailFile2: Yup.mixed().nullable().test(
+    "fileType",
+    "Unsupported file format (PNG, JPG, GIF only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+  ),
+  thumbnailFile3: Yup.mixed().nullable().test(
+    "fileType",
+    "Unsupported file format (PNG, JPG, GIF only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+  ),
+  thumbnailFile4: Yup.mixed().nullable().test(
+    "fileType",
+    "Unsupported file format (PNG, JPG, GIF only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+  ),
   stock: Yup.number().required('Stock quantity is required').integer('Stock must be an integer').min(0, 'Stock cannot be negative'),
   category: Yup.string().required('Category is required').oneOf(CATEGORY_OPTIONS, 'Invalid category'),
 });
@@ -45,11 +58,13 @@ export default function SellerAddProduct() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [sellerId, setSellerId] = useState(null);
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
     const fetchSessionAndSellerId = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setSession(currentSession);
+      if (currentSession) {
         const currentSellerId = typeof window !== 'undefined' ? localStorage.getItem('seller_id') : null;
         setSellerId(currentSellerId);
       } else {
@@ -67,7 +82,10 @@ export default function SellerAddProduct() {
       discount: '',
       description: '',
       imageFile: null, // For the main image file input
-      thumbnailFiles: [null, null, null, null], // For thumbnail file inputs
+      thumbnailFile1: null,
+      thumbnailFile2: null,
+      thumbnailFile3: null,
+      thumbnailFile4: null,
       stock: '',
       category: '',
     },
@@ -77,8 +95,8 @@ export default function SellerAddProduct() {
       setSuccessMessage('');
       setErrorMessage('');
 
-      if (!session) {
-        setErrorMessage('You must be logged in as a seller.');
+      if (!session || !sellerId) {
+        setErrorMessage('You must be logged in as a seller and your seller ID must be available.');
         setSubmitting(false);
         return;
       }
@@ -89,9 +107,17 @@ export default function SellerAddProduct() {
         if (imageError) throw new Error('Main image upload failed.');
 
         // 2. Upload thumbnail images
-        const thumbnailUrls = await Promise.all(
-          values.thumbnailFiles.map(file => file ? uploadProductImage(file).then(res => res.url) : null)
-        );
+        const { url: thumbnailUrl1, error: thumbnailError1 } = values.thumbnailFile1 ? await uploadProductImage(values.thumbnailFile1) : { url: null, error: null };
+        if (thumbnailError1) throw new Error('Thumbnail 1 upload failed.');
+
+        const { url: thumbnailUrl2, error: thumbnailError2 } = values.thumbnailFile2 ? await uploadProductImage(values.thumbnailFile2) : { url: null, error: null };
+        if (thumbnailError2) throw new Error('Thumbnail 2 upload failed.');
+
+        const { url: thumbnailUrl3, error: thumbnailError3 } = values.thumbnailFile3 ? await uploadProductImage(values.thumbnailFile3) : { url: null, error: null };
+        if (thumbnailError3) throw new Error('Thumbnail 3 upload failed.');
+
+        const { url: thumbnailUrl4, error: thumbnailError4 } = values.thumbnailFile4 ? await uploadProductImage(values.thumbnailFile4) : { url: null, error: null };
+        if (thumbnailError4) throw new Error('Thumbnail 4 upload failed.');
 
         // 3. Prepare product data
         const productData = {
@@ -99,10 +125,10 @@ export default function SellerAddProduct() {
           price: Number(values.price),
           description: values.description,
           image_url: imageUrl,
-          image_url_1: thumbnailUrls[0] || null,
-          image_url_2: thumbnailUrls[1] || null,
-          image_url_3: thumbnailUrls[2] || null,
-          image_url_4: thumbnailUrls[3] || null,
+          image_url_1: thumbnailUrl1,
+          image_url_2: thumbnailUrl2,
+          image_url_3: thumbnailUrl3,
+          image_url_4: thumbnailUrl4,
           stock: Number(values.stock),
           category: values.category,
           seller_id: sellerId,
@@ -135,40 +161,9 @@ export default function SellerAddProduct() {
       }
     }
     formik.setFieldValue('oldPrice', calculatedOldPrice);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.price, formik.values.discount]);
 
-
-  const renderFileInput = (name, label, index = -1) => (
-    <div>
-      <label className="block mb-1 font-medium">{label}</label>
-      <input
-        type="file"
-        accept="image/png, image/jpeg, image/gif"
-        onChange={(event) => {
-          if (index > -1) {
-            formik.setFieldValue(`${name}[${index}]`, event.currentTarget.files[0]);
-          } else {
-            formik.setFieldValue(name, event.currentTarget.files[0]);
-          }
-        }}
-        className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-      />
-      {index > -1 ? (
-        formik.touched.thumbnailFiles && formik.errors.thumbnailFiles && formik.errors.thumbnailFiles[index] && (
-          <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
-            <AlertCircle size={14} /> {typeof formik.errors.thumbnailFiles[index] === 'string' ? formik.errors.thumbnailFiles[index] : 'Invalid file'}
-          </div>
-        )
-      ) : (
-        formik.touched[name] && formik.errors[name] && (
-          <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
-            <AlertCircle size={14} /> {formik.errors[name]}
-          </div>
-        )
-      )}
-    </div>
-  );
 
   return (
     <div className="bg-white min-h-screen w-full flex flex-col">
@@ -269,15 +264,81 @@ export default function SellerAddProduct() {
                 )}
               </div>
 
-              {renderFileInput('imageFile', 'Main Image')}
+              <div>
+                <label className="block mb-1 font-medium">Main Image</label>
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg, image/gif"
+                  onChange={(event) => formik.setFieldValue('imageFile', event.currentTarget.files[0])}
+                  className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+                {formik.touched.imageFile && formik.errors.imageFile && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={14} /> {formik.errors.imageFile}
+                  </div>
+                )}
+              </div>
 
               <p className="text-sm font-medium text-gray-700 mt-4">Thumbnails (up to 4)</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {formik.values.thumbnailFiles.map((_, index) => (
-                  renderFileInput('thumbnailFiles', `Thumbnail Image ${index + 1}`, index)
-                ))}
+                <div>
+                  <label className="block mb-1 font-medium">Thumbnail Image 1</label>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/gif"
+                    onChange={(event) => formik.setFieldValue('thumbnailFile1', event.currentTarget.files[0])}
+                    className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  />
+                  {formik.touched.thumbnailFile1 && formik.errors.thumbnailFile1 && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle size={14} /> {formik.errors.thumbnailFile1}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block mb-1 font-medium">Thumbnail Image 2</label>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/gif"
+                    onChange={(event) => formik.setFieldValue('thumbnailFile2', event.currentTarget.files[0])}
+                    className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  />
+                  {formik.touched.thumbnailFile2 && formik.errors.thumbnailFile2 && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle size={14} /> {formik.errors.thumbnailFile2}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block mb-1 font-medium">Thumbnail Image 3</label>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/gif"
+                    onChange={(event) => formik.setFieldValue('thumbnailFile3', event.currentTarget.files[0])}
+                    className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  />
+                  {formik.touched.thumbnailFile3 && formik.errors.thumbnailFile3 && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle size={14} /> {formik.errors.thumbnailFile3}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block mb-1 font-medium">Thumbnail Image 4</label>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/gif"
+                    onChange={(event) => formik.setFieldValue('thumbnailFile4', event.currentTarget.files[0])}
+                    className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  />
+                  {formik.touched.thumbnailFile4 && formik.errors.thumbnailFile4 && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle size={14} /> {formik.errors.thumbnailFile4}
+                    </div>
+                  )}
+                </div>
               </div>
-              
+
               <div>
                 <label htmlFor="description" className="block mb-1 font-medium">Description</label>
                 <textarea
