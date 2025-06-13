@@ -2,10 +2,17 @@
 import Link from 'next/link'
 import { FiUser, FiBox, FiBarChart2, FiLogOut, FiHome, FiMenu } from 'react-icons/fi'
 import { useState } from 'react'
-
+import { useRouter } from 'next/navigation'
+import { signOut } from '@/app/utiils/supabase/auth'
 export default function SellerNavbar() {
   const [menuOpen, setMenuOpen] = useState(false)
-
+  const router = useRouter()
+ 
+  const handleuserLogout = () => {
+    localStorage.removeItem('userId');
+    signOut();
+    router.push('/');
+  };
   return (
     <nav className="w-full bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 text-white shadow-lg fixed top-0 left-0 z-50">
       <div className="max-w-8xl mx-auto flex items-center px-6 py-3">
@@ -33,8 +40,8 @@ export default function SellerNavbar() {
         </div>
 
         {/* Logout (Extreme Right) and Hamburger */}
-        <div className="flex items-center ml-auto gap-4">
-          <Link href="/seller/logout" className="flex items-center gap-1 font-semibold hover:text-amber-400 transition">
+        <div onClick={handleuserLogout} className="flex items-center ml-auto gap-4">
+          <Link href="#" className="flex items-center gap-1 font-semibold hover:text-amber-400 transition">
             <FiLogOut className="text-xl" /> Logout
           </Link>
           {/* Hamburger for mobile */}

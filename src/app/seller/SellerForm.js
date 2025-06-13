@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 import { useState, useEffect } from 'react'
 import { Building, FileText, CheckCircle, XCircle, Calendar, User, Save } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
-
+import { useRouter } from 'next/navigation'
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
 const validationSchema = Yup.object({
@@ -17,6 +17,7 @@ const validationSchema = Yup.object({
 export default function SellerForm({ userId: propUserId }) {
   const localUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : ''
   const userId = propUserId || localUserId
+  const router = useRouter()
 
   const [initialValues, setInitialValues] = useState({
     shop_name: '',
@@ -64,6 +65,9 @@ export default function SellerForm({ userId: propUserId }) {
         alert('Error saving seller details: ' + error.message)
       } else {
         alert('Seller details saved successfully!')
+        setTimeout(() => {
+          router.push('/seller/seller-homepage');
+        }, 1000);
       }
     },
   })
