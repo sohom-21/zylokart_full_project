@@ -1,23 +1,36 @@
 'use client'
 import { useEffect, useState } from "react";
-import Navbar from './components/Navbars/Navbar-landing'
-import Footer from "./components/Footer";
+import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
+import Footer from "@/app/components/Footer";
 import Link from "next/link";
-import supabase from "./utiils/supabase/client";
+import supabase from "@/app/utiils/supabase/client";
 
-export default function Home() {
+export default function Homepage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
 
-  useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
+
+  const fetchSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (session) {
+          setSession(session);
+        } else {
+          setSession(null);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        setSession(null);
+      }
     };
+  
+    useEffect(() => {
+    // Check if user is logged in
     fetchSession();
-  }, []);
+  }, [])
+  
 
   useEffect(() => {
     // Replace these URLs with your backend endpoints
@@ -38,8 +51,8 @@ export default function Home() {
           labelColor: 'bg-zinc-800 text-white',
           category: 'Home',
           title: 'Minimalist Ceramic Vase',
-          price: '₹890.00',
-          image: '/LandingPage/Minimalist.jpg',
+          price: '$89.00',
+          image: 'https://placehold.co/438x628',
           rating: 5,
           ratingCount: 42,
         },
@@ -47,8 +60,8 @@ export default function Home() {
           id: 2,
           category: 'Footwear',
           title: 'Premium Leather Sneakers',
-          price: '₹1950.00',
-          image: '/LandingPage/Shoes.jpg',
+          price: '$195.00',
+          image: 'https://placehold.co/510x365',
           rating: 5,
           ratingCount: 87,
         },
@@ -58,8 +71,8 @@ export default function Home() {
           labelColor: 'bg-zinc-800 text-white',
           category: 'Clothing',
           title: 'Cashmere Sweater',
-          price: '₹1249.00',
-          image: '/LandingPage/Sweater.jpg',
+          price: '$249.00',
+          image: 'https://placehold.co/438x657',
           rating: 5,
           ratingCount: 124,
         },
@@ -70,7 +83,7 @@ export default function Home() {
 
   if (loading) return (
     <div>
-      <Navbar />
+      <CustomerNavbar />
       <div className="min-h-[60vh] flex items-center justify-center">Loading...</div>
       <Footer />
     </div>
@@ -78,7 +91,7 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
+      <CustomerNavbar />
 
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] md:h-[100vh] flex items-center justify-start overflow-hidden">
@@ -167,23 +180,6 @@ export default function Home() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Become a Seller */}
-      <section className="w-full bg-neutral-200 py-16 border-t border-neutral-200">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col items-center">
-          <h2 className="text-3xl md:text-4xl font-medium font-['Playfair_Display'] text-zinc-800 mb-4 text-center">
-            Wanted to become a Seller on Zylokart
-          </h2>
-          <p className="text-zinc-600 text-lg font-normal font-['Inter'] mb-8 text-center">
-            Are you a creator, brand, or entrepreneur looking to reach a wider audience? Zylokart is always on the lookout for passionate sellers who value quality and customer experience. Join our platform to showcase your unique products, benefit from our secure and fast infrastructure, and grow your business with a community that cares about transparency and innovation. We handle the tech, you focus on what you do best—delivering great products!
-          </p>
-          <Link href="/auth/sellersignup">
-            <button className="px-8 py-4 bg-zinc-800 text-white rounded-3xl font-medium font-['Inter'] hover:bg-zinc-900 transition">
-              Apply to Become a Seller
-            </button>
-          </Link>
         </div>
       </section>
 

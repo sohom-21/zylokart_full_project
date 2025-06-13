@@ -1,9 +1,12 @@
 'use client'
-import Navbar from '@/app/components/Navbar'
+import Navbar from '@/app/components/Navbars/Navbar-landing'
 import Footer from '@/app/components/Footer'
 import Link from 'next/link'
 import { useState } from 'react'
-
+import { signIn } from '@/app/utiils/supabase/auth'
+import { Toaster, toast } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { getUserById } from '@/app/utiils/supabase/user_data'
 export default function Login() {
   const [form, setForm] = useState({
     email: '',
@@ -12,6 +15,7 @@ export default function Login() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter();
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target
@@ -26,23 +30,27 @@ export default function Login() {
     setMessage('')
     setLoading(true)
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setMessage('Login successful!')
-        // Optionally redirect to dashboard
+      const { error } = await signIn(form.email, form.password)
+      if (error) {
+        setMessage(error.message)
+        toast.error(error.message)
       } else {
-        setMessage(data.error || 'Login failed')
+        setMessage('Login successful! Redirecting...')
+        toast.success('Login successful! Redirecting...')
+        const user_id = localStorage.getItem('userId')
+        const {data} = await getUserById(user_id)
+        if(data.role === 'seller'){
+          router.push('/seller/seller-homepage')
+        }else{
+          // Optionally redirect to a dashboard or home page
+          router.push('/customer/homepage')
+          // window.location.href = '/dashboard'
+        }
       }
-    } catch (err) {
-      setMessage('Network error')
+    } catch(error) {
+      setMessage(error.message || 'An error occurred. Please try again later.')
+      toast.error(error.message || 'An error occurred. Please try again later.')
+      console.error('Login error:', error)
     }
     setLoading(false)
   }
@@ -108,7 +116,7 @@ export default function Login() {
                 />
                 <label htmlFor="remember" className="text-white text-sm">Remember me</label>
               </div>
-              <Link href="/auth/forgot-password" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
+              <Link href="/auth/resetpassword" className="text-xs text-white/80 hover:underline">Forgot Password?</Link>
             </div>
             <button
               type="submit"
@@ -124,6 +132,7 @@ export default function Login() {
         </div>
       </main>
       <Footer />
+      <Toaster />
     </div>
   )
 }

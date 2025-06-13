@@ -1,5 +1,5 @@
 'use client'
-import CustomerNavbar from '@/app/components/navbar-customer'
+import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 
 const sampleProducts = [

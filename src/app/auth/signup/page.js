@@ -1,8 +1,11 @@
 'use client'
-import Navbar from '@/app/components/Navbar'
+import Navbar from '@/app/components/Navbars/Navbar-landing'
 import Footer from '@/app/components/Footer'
 import Link from 'next/link'
+import { signUp } from '@/app/utiils/supabase/auth'
 import { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 export default function Signup() {
   const [form, setForm] = useState({
@@ -14,6 +17,7 @@ export default function Signup() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target
@@ -28,34 +32,40 @@ export default function Signup() {
     setMessage('')
     if (form.password !== form.confirmPassword) {
       setMessage('Passwords do not match')
+      toast.error('Passwords do not match')
       return
     }
     if (!form.terms) {
       setMessage('You must agree to the terms')
+      toast.error('You must agree to the terms')
       return
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setMessage('Signup successful! Please login.')
-        // Optionally redirect to login page
+      const { error } = await signUp(form.email, form.password, { full_name: form.name })
+      if (error) {
+        setMessage(error.message)
+        toast.error(error.message)
       } else {
-        setMessage(data.error || 'Signup failed')
+        setMessage('Sign up successful! Please check your email for confirmation.')
+        toast.success('Sign up successful! Please check your email for confirmation.')
+        setForm({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          terms: false,
+        })
+        router.push('/customer/profile-details?role=user')
       }
-    } catch (err) {
-      setMessage('Network error')
     }
-    setLoading(false)
+    catch (error) {
+      setMessage('An error occurred. Please try again later.')
+      toast.error('An error occurred. Please try again later.')
+      console.error('Sign up error:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -159,6 +169,7 @@ export default function Signup() {
         </div>
       </main>
       <Footer />
+      <Toaster />
     </div>
   )
 }
