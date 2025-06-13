@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { getProductsBySellerId } from '@/app/utiils/supabase/products'
+import { useSession } from '@supabase/auth-helpers-react'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
@@ -7,25 +9,23 @@ import supabase from '@/app/utiils/supabase/client'
 
 
 export default function SellerProductList() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const session = useSession();
+  const sellerId = session?.user?.id || localStorage.getItem('userId');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editIdx, setEditIdx] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [actionMsg, setActionMsg] = useState('')
   const [images, setImages] = useState(null)
 
   useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  async function fetchProducts() {
-    setLoading(true)
-    setActionMsg('')
-    // You may want to filter by seller_id if available
-    const { data, error } = await supabase.from('products').select('*').order('id', { ascending: false })
-    setProducts(data || [])
-    setLoading(false)
-  }
+    if (!sellerId) return;
+    setLoading(true);
+    getProductsBySellerId(sellerId).then(({ data, error }) => {
+      if (!error) setProducts(data || []);
+      setLoading(false);
+    });
+  }, [sellerId]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return

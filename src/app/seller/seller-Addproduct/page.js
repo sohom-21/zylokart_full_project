@@ -4,16 +4,12 @@ import { useState, useEffect } from 'react'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
-import { createClient } from '@supabase/supabase-js'
+import { insertProduct, uploadProductImage } from '@/app/utiils/supabase/products'
+import { useSession } from '@supabase/auth-helpers-react' // or your session hook
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { UploadCloud, AlertCircle, CheckCircle } from 'lucide-react'
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 const CATEGORY_OPTIONS = [
   "Clothing",
@@ -23,43 +19,6 @@ const CATEGORY_OPTIONS = [
   "Footwear",
   "Accessories"
 ];
-
-// --- Helper function for file upload (placeholder) ---
-// You'll need to implement this function to upload files to Supabase Storage
-// and return the public URL.
-async function uploadFileToSupabase(file) {
-  if (!file) return null;
-
-  const fileName = `${Date.now()}-${file.name}`;
-  const filePath = `product-images/${fileName}`; // Adjust bucket/path as needed
-
-  // console.log(`Uploading ${filePath}`); // Debug log
-
-  const { data, error } = await supabase.storage
-    .from('store-product-images') // Make sure this bucket exists and has correct policies
-    .upload(filePath, file);
-
-  if (error) {
-    console.error('Error uploading file:', error);
-    throw error;
-  }
-  
-  // console.log('Upload successful, data:', data); // Debug log
-
-  const { data: publicUrlData } = supabase.storage
-    .from('store-product-images')
-    .getPublicUrl(filePath);
-
-  // console.log('Public URL data:', publicUrlData); // Debug log
-  
-  if (!publicUrlData || !publicUrlData.publicUrl) {
-      console.error('Error getting public URL for path:', filePath, publicUrlData);
-      throw new Error('Could not get public URL for uploaded file.');
-  }
-
-  return publicUrlData.publicUrl;
-}
-// --- End Helper function ---
 
 const validationSchema = Yup.object({
   title: Yup.string().required('Product title is required').min(3, 'Title is too short'),
@@ -85,6 +44,8 @@ const validationSchema = Yup.object({
 export default function SellerAddProduct() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const session = useSession();
+  const sellerId = session?.user?.id || localStorage.getItem('userId');
 
   const formik = useFormik({
     initialValues: {
@@ -104,48 +65,44 @@ export default function SellerAddProduct() {
       setSuccessMessage('');
       setErrorMessage('');
 
+      if (!session) {
+        setErrorMessage('You must be logged in as a seller.');
+        setSubmitting(false);
+        return;
+      }
+
       try {
         // 1. Upload main image
-        const imageUrl = await uploadFileToSupabase(values.imageFile);
-        if (!imageUrl) throw new Error('Main image upload failed.');
+        const { url: imageUrl, error: imageError } = await uploadProductImage(values.imageFile);
+        if (imageError) throw new Error('Main image upload failed.');
 
         // 2. Upload thumbnail images
         const thumbnailUrls = await Promise.all(
-          values.thumbnailFiles.map(file => file ? uploadFileToSupabase(file) : null)
+          values.thumbnailFiles.map(file => file ? uploadProductImage(file).then(res => res.url) : null)
         );
-        const validThumbnailUrls = thumbnailUrls.filter(url => url !== null);
 
-        // 3. Prepare product data for Supabase
+        // 3. Prepare product data
         const productData = {
-          title: values.title,
-          price: Number(values.price), // MRP
-          oldPrice: values.oldPrice ? Number(values.oldPrice) : null, // Offered Price
-          discount: values.discount ? Number(values.discount) : null,
+          name: values.title,
+          price: Number(values.price),
           description: values.description,
-          image: imageUrl,
-          thumbnails: validThumbnailUrls,
+          image_url: imageUrl,
+          image_url_1: thumbnailUrls[0] || null,
+          image_url_2: thumbnailUrls[1] || null,
+          image_url_3: thumbnailUrls[2] || null,
+          image_url_4: thumbnailUrls[3] || null,
           stock: Number(values.stock),
           category: values.category,
-          // You might want to add seller_id here if your table requires it
-          // seller_id: supabase.auth.user()?.id // Example
+          seller_id: sellerId,
         };
-        
-        // console.log("Submitting product data:", productData); // Debug log
 
-        // 4. Insert into Supabase
-        const { error: supabaseError } = await supabase
-          .from('products')
-          .insert([productData]);
-
-        if (supabaseError) {
-          // console.error("Supabase error:", supabaseError); // Debug log
-          throw new Error(supabaseError.message);
-        }
+        // 4. Insert into Products table
+        const { error: supabaseError } = await insertProduct(productData);
+        if (supabaseError) throw new Error(supabaseError.message);
 
         setSuccessMessage('Product added successfully!');
         resetForm();
       } catch (err) {
-        // console.error("Submit error:", err); // Debug log
         setErrorMessage(err.message || 'Failed to add product.');
       }
       setSubmitting(false);
