@@ -64,6 +64,10 @@ export default function SellerForm({ userId: propUserId }) {
       if (error) {
         alert('Error saving seller details: ' + error.message)
       } else {
+        // Set seller_id in localStorage after onboarding
+        if (data && data[0] && data[0].seller_id) {
+          localStorage.setItem('seller_id', data[0].seller_id);
+        }
         alert('Seller details saved successfully!')
         setTimeout(() => {
           router.push('/seller/seller-homepage');

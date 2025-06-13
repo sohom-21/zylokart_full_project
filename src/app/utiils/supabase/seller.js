@@ -1,6 +1,6 @@
 import supabase from './client'
 
-// Insert a new seller
+// Insert a new seller (returns seller_id)
 export async function insertSeller(sellerObj) {
   const { data, error } = await supabase
     .from('Sellers')
@@ -9,7 +9,17 @@ export async function insertSeller(sellerObj) {
   return { data, error }
 }
 
-// Get a seller by user_id (foreign key)
+// Get a seller by seller_id (recommended for most operations)
+export async function getSellerBySellerId(seller_id) {
+  const { data, error } = await supabase
+    .from('Sellers')
+    .select('*')
+    .eq('seller_id', seller_id)
+    .single()
+  return { data, error }
+}
+
+// Get a seller by user_id (useful for onboarding)
 export async function getSellerByUserId(user_id) {
   const { data, error } = await supabase
     .from('Sellers')
@@ -19,21 +29,21 @@ export async function getSellerByUserId(user_id) {
   return { data, error }
 }
 
-// Update a seller by user_id
-export async function updateSellerByUserId(user_id, updateObj) {
+// Update a seller by seller_id
+export async function updateSellerBySellerId(seller_id, updateObj) {
   const { data, error } = await supabase
     .from('Sellers')
     .update(updateObj)
-    .eq('user_id', user_id)
+    .eq('seller_id', seller_id)
     .select()
   return { data, error }
 }
 
-// Delete a seller by user_id
-export async function deleteSellerByUserId(user_id) {
+// Delete a seller by seller_id
+export async function deleteSellerBySellerId(seller_id) {
   const { error } = await supabase
     .from('Sellers')
     .delete()
-    .eq('user_id', user_id)
+    .eq('seller_id', seller_id)
   return { error }
 }

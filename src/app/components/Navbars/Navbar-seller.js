@@ -10,6 +10,7 @@ export default function SellerNavbar() {
  
   const handleuserLogout = () => {
     localStorage.removeItem('userId');
+    localStorage.removeItem('seller_id');
     signOut();
     router.push('/');
   };

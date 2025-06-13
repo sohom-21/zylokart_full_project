@@ -1,22 +1,32 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { getProductsBySellerId } from '@/app/utiils/supabase/products'
-import { useSession } from '@supabase/auth-helpers-react'
+import supabase from '@/app/utiils/supabase/client'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
-import supabase from '@/app/utiils/supabase/client'
 
 
 export default function SellerProductList() {
-  const session = useSession();
-  const sellerId = session?.user?.id || localStorage.getItem('userId');
+  const [sellerId, setSellerId] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editIdx, setEditIdx] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [actionMsg, setActionMsg] = useState('')
-  const [images, setImages] = useState(null)
+
+  useEffect(() => {
+    const fetchSessionAndSellerId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const currentSellerId = typeof window !== 'undefined' ? localStorage.getItem('seller_id') : null;
+        setSellerId(currentSellerId);
+      } else {
+        setSellerId(null);
+      }
+    };
+    fetchSessionAndSellerId();
+  }, []);
 
   useEffect(() => {
     if (!sellerId) return;

@@ -1,6 +1,6 @@
 import supabase from "./client";
 
-// Insert a new product
+// Insert a new product (requires seller_id)
 export async function insertProduct(productObj) {
   const { data, error } = await supabase
     .from('Products')

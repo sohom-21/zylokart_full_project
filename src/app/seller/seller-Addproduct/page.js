@@ -5,7 +5,7 @@ import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
 import { insertProduct, uploadProductImage } from '@/app/utiils/supabase/products'
-import { useSession } from '@supabase/auth-helpers-react' // or your session hook
+import supabase from '@/app/utiils/supabase/client'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { UploadCloud, AlertCircle, CheckCircle } from 'lucide-react'
@@ -44,8 +44,20 @@ const validationSchema = Yup.object({
 export default function SellerAddProduct() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const session = useSession();
-  const sellerId = session?.user?.id || localStorage.getItem('userId');
+  const [sellerId, setSellerId] = useState(null);
+
+  useEffect(() => {
+    const fetchSessionAndSellerId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const currentSellerId = typeof window !== 'undefined' ? localStorage.getItem('seller_id') : null;
+        setSellerId(currentSellerId);
+      } else {
+        setSellerId(null);
+      }
+    };
+    fetchSessionAndSellerId();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
