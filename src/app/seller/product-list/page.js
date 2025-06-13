@@ -3,12 +3,8 @@ import { useEffect, useState } from 'react'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
-import { createClient } from '@supabase/supabase-js'
+import supabase from '@/app/utiils/supabase/client'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export default function SellerProductList() {
   const [products, setProducts] = useState([])
@@ -16,6 +12,7 @@ export default function SellerProductList() {
   const [editIdx, setEditIdx] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [actionMsg, setActionMsg] = useState('')
+  const [images, setImages] = useState(null)
 
   useEffect(() => {
     fetchProducts()

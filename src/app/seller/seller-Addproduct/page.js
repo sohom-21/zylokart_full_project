@@ -1,120 +1,205 @@
+// E:\gitHub_Docs\zylokart_full_project\src\app\seller\seller-Addproduct\page.js
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
 import { createClient } from '@supabase/supabase-js'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { UploadCloud, AlertCircle, CheckCircle } from 'lucide-react'
 
-// Initialize Supabase client (replace with your keys or use env vars)
+// Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
 const CATEGORY_OPTIONS = [
-  "Clothing (T-Shirts, Jeans, Dresses, Jackets, Hoodies, Ethnic Wear)",
-  "Home decoration (Wall Art, Indoor Plants, Lamps, Vases, Cushions, Candles)",
-  "Beauty (Skincare Kits, Lipsticks, Perfumes, Hair Products, Makeup Brushes, Face Masks)",
-  "Furniture (Sofas, Dining Tables, Bed Frames, Bookshelves, Coffee Tables, Office Chairs)",
-  "Footwear (Sneakers, Heels, Loafers, Flip-Flops, Sandals, Boots)",
-  "Accessories (Watches, Sunglasses, Handbags, Wallets, Belts, Jewelry)"
+  "Clothing",
+  "Home decoration",
+  "Beauty",
+  "Furniture",
+  "Footwear",
+  "Accessories"
 ];
 
+// --- Helper function for file upload (placeholder) ---
+// You'll need to implement this function to upload files to Supabase Storage
+// and return the public URL.
+async function uploadFileToSupabase(file) {
+  if (!file) return null;
+
+  const fileName = `${Date.now()}-${file.name}`;
+  const filePath = `product-images/${fileName}`; // Adjust bucket/path as needed
+
+  // console.log(`Uploading ${filePath}`); // Debug log
+
+  const { data, error } = await supabase.storage
+    .from('store-product-images') // Make sure this bucket exists and has correct policies
+    .upload(filePath, file);
+
+  if (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+  
+  // console.log('Upload successful, data:', data); // Debug log
+
+  const { data: publicUrlData } = supabase.storage
+    .from('store-product-images')
+    .getPublicUrl(filePath);
+
+  // console.log('Public URL data:', publicUrlData); // Debug log
+  
+  if (!publicUrlData || !publicUrlData.publicUrl) {
+      console.error('Error getting public URL for path:', filePath, publicUrlData);
+      throw new Error('Could not get public URL for uploaded file.');
+  }
+
+  return publicUrlData.publicUrl;
+}
+// --- End Helper function ---
+
+const validationSchema = Yup.object({
+  title: Yup.string().required('Product title is required').min(3, 'Title is too short'),
+  price: Yup.number().required('MRP is required').positive('MRP must be positive'),
+  discount: Yup.number().min(0, 'Discount cannot be negative').max(100, 'Discount cannot exceed 100').nullable(),
+  description: Yup.string().required('Description is required').min(10, 'Description is too short'),
+  imageFile: Yup.mixed().required('Main image is required').test(
+    "fileType",
+    "Unsupported file format (PNG, JPG, GIF only)",
+    value => value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type)
+  ),
+  thumbnailFiles: Yup.array().of(
+    Yup.mixed().nullable().test(
+      "fileType",
+      "Unsupported file format in thumbnails (PNG, JPG, GIF only)",
+      value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+    )
+  ).max(4, 'You can upload up to 4 thumbnails'),
+  stock: Yup.number().required('Stock quantity is required').integer('Stock must be an integer').min(0, 'Stock cannot be negative'),
+  category: Yup.string().required('Category is required').oneOf(CATEGORY_OPTIONS, 'Invalid category'),
+});
+
 export default function SellerAddProduct() {
-  const [form, setForm] = useState({
-    title: '',
-    price: '',
-    oldPrice: '',
-    discount: '',
-    description: '',
-    image: '',
-    thumbnails: ['', '', '', '', ''],
-    stock: '',
-    category: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Auto-calculate offered price when MRP and discount are filled
-  const handleChange = e => {
-    const { name, value } = e.target
-    if (name === 'price') {
-      // If discount is present, recalculate oldPrice
-      if (form.discount) {
-        const mrp = Number(value)
-        const discount = Number(form.discount)
-        const offer = mrp - Math.round((mrp * discount) / 100)
-        setForm(prev => ({
-          ...prev,
-          price: value,
-          oldPrice: offer ? offer : '',
-        }))
-        return
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      price: '', // This will be MRP
+      oldPrice: '', // This will be the calculated Offered Price
+      discount: '',
+      description: '',
+      imageFile: null, // For the main image file input
+      thumbnailFiles: [null, null, null, null], // For thumbnail file inputs
+      stock: '',
+      category: '',
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      setSubmitting(true);
+      setSuccessMessage('');
+      setErrorMessage('');
+
+      try {
+        // 1. Upload main image
+        const imageUrl = await uploadFileToSupabase(values.imageFile);
+        if (!imageUrl) throw new Error('Main image upload failed.');
+
+        // 2. Upload thumbnail images
+        const thumbnailUrls = await Promise.all(
+          values.thumbnailFiles.map(file => file ? uploadFileToSupabase(file) : null)
+        );
+        const validThumbnailUrls = thumbnailUrls.filter(url => url !== null);
+
+        // 3. Prepare product data for Supabase
+        const productData = {
+          title: values.title,
+          price: Number(values.price), // MRP
+          oldPrice: values.oldPrice ? Number(values.oldPrice) : null, // Offered Price
+          discount: values.discount ? Number(values.discount) : null,
+          description: values.description,
+          image: imageUrl,
+          thumbnails: validThumbnailUrls,
+          stock: Number(values.stock),
+          category: values.category,
+          // You might want to add seller_id here if your table requires it
+          // seller_id: supabase.auth.user()?.id // Example
+        };
+        
+        // console.log("Submitting product data:", productData); // Debug log
+
+        // 4. Insert into Supabase
+        const { error: supabaseError } = await supabase
+          .from('products')
+          .insert([productData]);
+
+        if (supabaseError) {
+          // console.error("Supabase error:", supabaseError); // Debug log
+          throw new Error(supabaseError.message);
+        }
+
+        setSuccessMessage('Product added successfully!');
+        resetForm();
+      } catch (err) {
+        // console.error("Submit error:", err); // Debug log
+        setErrorMessage(err.message || 'Failed to add product.');
+      }
+      setSubmitting(false);
+    },
+  });
+
+  // Effect to auto-calculate offered price (oldPrice)
+  useEffect(() => {
+    const { price, discount } = formik.values;
+    let calculatedOldPrice = '';
+    if (price) {
+      const mrp = Number(price);
+      if (discount) {
+        const discPercent = Number(discount);
+        calculatedOldPrice = (mrp - Math.round((mrp * discPercent) / 100)).toFixed(2);
+      } else {
+        calculatedOldPrice = mrp.toFixed(2);
       }
     }
-    if (name === 'discount') {
-      // If price is present, recalculate oldPrice
-      if (form.price) {
-        const mrp = Number(form.price)
-        const discount = Number(value)
-        const offer = mrp - Math.round((mrp * discount) / 100)
-        setForm(prev => ({
-          ...prev,
-          discount: value,
-          oldPrice: offer ? offer : '',
-        }))
-        return
-      }
-    }
-    setForm(prev => ({ ...prev, [name]: value }))
-  }
+    formik.setFieldValue('oldPrice', calculatedOldPrice);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.price, formik.values.discount]);
 
-  const handleThumbnailChange = (idx, value) => {
-    const newThumbs = [...form.thumbnails]
-    newThumbs[idx] = value
-    setForm(prev => ({ ...prev, thumbnails: newThumbs }))
-  }
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setLoading(true)
-    setSuccess('')
-    setError('')
-    try {
-      const { error: supabaseError } = await supabase
-        .from('products')
-        .insert([
-          {
-            title: form.title,
-            price: Number(form.price),
-            oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
-            discount: form.discount ? Number(form.discount) : null,
-            description: form.description,
-            image: form.image,
-            thumbnails: form.thumbnails,
-            stock: Number(form.stock),
-            category: form.category,
+  const renderFileInput = (name, label, index = -1) => (
+    <div>
+      <label className="block mb-1 font-medium">{label}</label>
+      <input
+        type="file"
+        accept="image/png, image/jpeg, image/gif"
+        onChange={(event) => {
+          if (index > -1) {
+            formik.setFieldValue(`${name}[${index}]`, event.currentTarget.files[0]);
+          } else {
+            formik.setFieldValue(name, event.currentTarget.files[0]);
           }
-        ])
-      if (supabaseError) throw new Error(supabaseError.message)
-      setSuccess('Product added successfully!')
-      setForm({
-        title: '',
-        price: '',
-        oldPrice: '',
-        discount: '',
-        description: '',
-        image: '',
-        thumbnails: ['', '', '', '', ''],
-        stock: '',
-        category: '',
-      })
-    } catch (err) {
-      setError(err.message)
-    }
-    setLoading(false)
-  }
+        }}
+        className="w-full border px-3 py-2 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+      />
+      {index > -1 ? (
+        formik.touched.thumbnailFiles && formik.errors.thumbnailFiles && formik.errors.thumbnailFiles[index] && (
+          <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={14} /> {typeof formik.errors.thumbnailFiles[index] === 'string' ? formik.errors.thumbnailFiles[index] : 'Invalid file'}
+          </div>
+        )
+      ) : (
+        formik.touched[name] && formik.errors[name] && (
+          <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={14} /> {formik.errors[name]}
+          </div>
+        )
+      )}
+    </div>
+  );
 
   return (
     <div className="bg-white min-h-screen w-full flex flex-col">
@@ -124,125 +209,140 @@ export default function SellerAddProduct() {
         <main className="flex-1 px-8 py-10">
           <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
-            <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded shadow">
+            <form onSubmit={formik.handleSubmit} className="space-y-5 bg-white p-6 rounded shadow">
               <div>
-                <label className="block mb-1 font-medium">Product Title</label>
+                <label htmlFor="title" className="block mb-1 font-medium">Product Title</label>
                 <input
+                  id="title"
                   name="title"
-                  value={form.title}
-                  onChange={handleChange}
-                  required
-                  className="w-full border px-3 py-2 rounded"
+                  {...formik.getFieldProps('title')}
+                  className={`w-full border px-3 py-2 rounded ${formik.touched.title && formik.errors.title ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Minimalist Ceramic Vase"
                 />
+                {formik.touched.title && formik.errors.title && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.title}</div>
+                )}
               </div>
-              <div className="flex gap-4">
+
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
-                  <label className="block mb-1 font-medium">MRP (₹)</label>
+                  <label htmlFor="price" className="block mb-1 font-medium">MRP (₹)</label>
                   <input
+                    id="price"
                     name="price"
                     type="number"
-                    value={form.price}
-                    onChange={handleChange}
-                    required
-                    className="w-full border px-3 py-2 rounded"
+                    {...formik.getFieldProps('price')}
+                    className={`w-full border px-3 py-2 rounded ${formik.touched.price && formik.errors.price ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g. 999"
                   />
+                  {formik.touched.price && formik.errors.price && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.price}</div>
+                  )}
                 </div>
                 <div className="flex-1">
-                  <label className="block mb-1 font-medium">Offered Price (₹)</label>
+                  <label htmlFor="discount" className="block mb-1 font-medium">Discount (%)</label>
                   <input
+                    id="discount"
+                    name="discount"
+                    type="number"
+                    {...formik.getFieldProps('discount')}
+                    className={`w-full border px-3 py-2 rounded ${formik.touched.discount && formik.errors.discount ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="e.g. 20"
+                  />
+                  {formik.touched.discount && formik.errors.discount && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.discount}</div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="oldPrice" className="block mb-1 font-medium">Offered Price (₹)</label>
+                  <input
+                    id="oldPrice"
                     name="oldPrice"
                     type="number"
-                    value={form.oldPrice}
+                    value={formik.values.oldPrice}
                     readOnly
-                    className="w-full border px-3 py-2 rounded bg-gray-100"
+                    className="w-full border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
                     placeholder="Auto-calculated"
                   />
                 </div>
-                <div className="flex-1">
-                  <label className="block mb-1 font-medium">Discount (%)</label>
-                  <input
-                    name="discount"
-                    type="number"
-                    value={form.discount}
-                    onChange={handleChange}
-                    className="w-full border px-3 py-2 rounded"
-                    placeholder="e.g. 20"
-                  />
-                </div>
               </div>
+
               <div>
-                <label className="block mb-1 font-medium">Stock</label>
+                <label htmlFor="stock" className="block mb-1 font-medium">Stock</label>
                 <input
+                  id="stock"
                   name="stock"
                   type="number"
-                  value={form.stock}
-                  onChange={handleChange}
-                  required
-                  className="w-full border px-3 py-2 rounded"
+                  {...formik.getFieldProps('stock')}
+                  className={`w-full border px-3 py-2 rounded ${formik.touched.stock && formik.errors.stock ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="100"
                 />
+                {formik.touched.stock && formik.errors.stock && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.stock}</div>
+                )}
               </div>
+
               <div>
-                <label className="block mb-1 font-medium">Category</label>
+                <label htmlFor="category" className="block mb-1 font-medium">Category</label>
                 <select
+                  id="category"
                   name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  required
-                  className="w-full border px-3 py-2 rounded"
+                  {...formik.getFieldProps('category')}
+                  className={`w-full border px-3 py-2 rounded ${formik.touched.category && formik.errors.category ? 'border-red-500' : 'border-gray-300'}`}
                 >
                   <option value="">Select Category</option>
                   {CATEGORY_OPTIONS.map(option => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
+                {formik.touched.category && formik.errors.category && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.category}</div>
+                )}
               </div>
-              <div>
-                <label className="block mb-1 font-medium">Main Image URL</label>
-                <input
-                  name="image"
-                  value={form.image}
-                  onChange={handleChange}
-                  required
-                  className="w-full border px-3 py-2 rounded"
-                  placeholder="https://placehold.co/577x650"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[0, 1, 2, 3, 4].map(idx => (
-                  <div key={idx}>
-                    <label className="block mb-1 font-medium">{`Thumbnail ${idx + 1} URL`}</label>
-                    <input
-                      value={form.thumbnails[idx]}
-                      onChange={e => handleThumbnailChange(idx, e.target.value)}
-                      className="w-full border px-3 py-2 rounded"
-                      placeholder={`https://placehold.co/100x100`}
-                    />
-                  </div>
+
+              {renderFileInput('imageFile', 'Main Image')}
+
+              <p className="text-sm font-medium text-gray-700 mt-4">Thumbnails (up to 4)</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {formik.values.thumbnailFiles.map((_, index) => (
+                  renderFileInput('thumbnailFiles', `Thumbnail Image ${index + 1}`, index)
                 ))}
               </div>
+              
               <div>
-                <label className="block mb-1 font-medium">Description</label>
+                <label htmlFor="description" className="block mb-1 font-medium">Description</label>
                 <textarea
+                  id="description"
                   name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  required
-                  className="w-full border px-3 py-2 rounded"
+                  {...formik.getFieldProps('description')}
+                  rows="4"
+                  className={`w-full border px-3 py-2 rounded ${formik.touched.description && formik.errors.description ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Premium lifestyle products for the modern individual. Quality, design, and sustainability in every piece."
                 />
+                {formik.touched.description && formik.errors.description && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={14} />{formik.errors.description}</div>
+                )}
               </div>
+
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-amber-300 text-black py-3 rounded font-semibold hover:bg-amber-400 transition"
+                disabled={formik.isSubmitting}
+                className="w-full bg-amber-500 text-black py-3 rounded font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {loading ? 'Adding...' : 'Add Product'}
+                <UploadCloud size={20} />
+                {formik.isSubmitting ? 'Adding Product...' : 'Add Product'}
               </button>
-              {success && <div className="text-green-600 mt-2">{success}</div>}
-              {error && <div className="text-red-600 mt-2">{error}</div>}
+
+              {successMessage && (
+                <div className="text-green-600 mt-2 p-3 bg-green-50 border border-green-300 rounded flex items-center gap-2">
+                  <CheckCircle size={18} /> {successMessage}
+                </div>
+              )}
+              {errorMessage && (
+                <div className="text-red-600 mt-2 p-3 bg-red-50 border border-red-300 rounded flex items-center gap-2">
+                  <AlertCircle size={18} /> {errorMessage}
+                </div>
+              )}
             </form>
           </div>
         </main>
