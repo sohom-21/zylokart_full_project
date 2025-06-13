@@ -11,7 +11,6 @@ import * as Yup from 'yup'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast';
 
-
 const CATEGORY_OPTIONS = [
   "Clothing",
   "Home decoration",
@@ -29,27 +28,27 @@ const validationSchema = Yup.object({
   imageFile: Yup.mixed().required('Main image is required').test(
     "fileType",
     "Unsupported file format (PNG, JPG, GIF only)",
-    value => value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type)
+    value => value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type)
   ),
   thumbnailFile1: Yup.mixed().nullable().test(
     "fileType",
-    "Unsupported file format (PNG, JPG, GIF only)",
-    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+    "Unsupported file format (PNG, JPG only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
   ),
   thumbnailFile2: Yup.mixed().nullable().test(
     "fileType",
-    "Unsupported file format (PNG, JPG, GIF only)",
-    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+    "Unsupported file format (PNG, JPG only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
   ),
   thumbnailFile3: Yup.mixed().nullable().test(
     "fileType",
-    "Unsupported file format (PNG, JPG, GIF only)",
-    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+    "Unsupported file format (PNG, JPG only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
   ),
   thumbnailFile4: Yup.mixed().nullable().test(
     "fileType",
-    "Unsupported file format (PNG, JPG, GIF only)",
-    value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))
+    "Unsupported file format (PNG, JPG only)",
+    value => !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
   ),
   stock: Yup.number().required('Stock quantity is required').integer('Stock must be an integer').min(0, 'Stock cannot be negative'),
   category: Yup.string().required('Category is required').oneOf(CATEGORY_OPTIONS, 'Invalid category'),
@@ -130,6 +129,7 @@ export default function SellerAddProduct() {
           stock: Number(values.stock),
           category: values.category,
           seller_id: sellerId,
+          is_verified: true,
         };
 
         // 4. Insert into Products table

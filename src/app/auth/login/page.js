@@ -7,6 +7,7 @@ import { signIn } from '@/app/utiils/supabase/auth'
 import { Toaster, toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { getUserById } from '@/app/utiils/supabase/user_data'
+import { getSellerByUserId } from '@/app/utiils/supabase/seller'
 export default function Login() {
   const [form, setForm] = useState({
     email: '',
@@ -38,12 +39,25 @@ export default function Login() {
         setMessage('Login successful! Redirecting...')
         toast.success('Login successful! Redirecting...')
         const user_id = localStorage.getItem('userId')
-        const {data} = await getUserById(user_id)
-        if(data.role === 'seller'){
-          router.push('/seller/seller-homepage')
-        }else{
-          // Optionally redirect to a dashboard or home page
-          router.push('/customer/homepage')
+        const { data: userData } = await getUserById(user_id);
+        if (userData.role === 'seller') {
+          const { data: sellerData, error: sellerError } = await getSellerByUserId(user_id);
+          if (sellerError) {
+            console.error('Error fetching seller data:', sellerError.message);
+            toast.error('Failed to retrieve seller information.');
+            setLoading(false);
+            return;
+          }
+          if (sellerData) {
+            localStorage.setItem('seller_id', sellerData.seller_id);
+            router.push('/seller/seller-homepage');
+          } else {
+            toast.error('Seller profile not found.');
+            setLoading(false);
+            return;
+          }
+        } else {
+          router.push('/customer/homepage');
           // window.location.href = '/dashboard'
         }
       }
