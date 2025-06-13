@@ -47,3 +47,13 @@ export async function deleteSellerBySellerId(seller_id) {
     .eq('seller_id', seller_id)
   return { error }
 }
+
+// seller.js
+export async function deleteSellerByUserId(user_id) {
+  const { data, error } = await supabase
+    .from('Sellers')
+    .delete()
+    .eq('user_id', user_id)
+    .single()
+  return { data, error }
+}

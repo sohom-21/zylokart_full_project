@@ -8,7 +8,8 @@ import { insertProduct, uploadProductImage } from '@/app/utiils/supabase/product
 import supabase from '@/app/utiils/supabase/client'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { UploadCloud, AlertCircle, CheckCircle } from 'lucide-react'
+import { UploadCloud, AlertCircle } from 'lucide-react'
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const CATEGORY_OPTIONS = [
@@ -92,11 +93,8 @@ export default function SellerAddProduct() {
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
-      setSuccessMessage('');
-      setErrorMessage('');
-
       if (!session || !sellerId) {
-        setErrorMessage('You must be logged in as a seller and your seller ID must be available.');
+        toast.error('You must be logged in as a seller and your seller ID must be available.');
         setSubmitting(false);
         return;
       }
@@ -138,10 +136,10 @@ export default function SellerAddProduct() {
         const { error: supabaseError } = await insertProduct(productData);
         if (supabaseError) throw new Error(supabaseError.message);
 
-        setSuccessMessage('Product added successfully!');
+        toast.success('Product added successfully!');
         resetForm();
       } catch (err) {
-        setErrorMessage(err.message || 'Failed to add product.');
+        toast.error(err.message || 'Failed to add product.');
       }
       setSubmitting(false);
     },
@@ -363,21 +361,13 @@ export default function SellerAddProduct() {
                 {formik.isSubmitting ? 'Adding Product...' : 'Add Product'}
               </button>
 
-              {successMessage && (
-                <div className="text-green-600 mt-2 p-3 bg-green-50 border border-green-300 rounded flex items-center gap-2">
-                  <CheckCircle size={18} /> {successMessage}
-                </div>
-              )}
-              {errorMessage && (
-                <div className="text-red-600 mt-2 p-3 bg-red-50 border border-red-300 rounded flex items-center gap-2">
-                  <AlertCircle size={18} /> {errorMessage}
-                </div>
-              )}
+              
             </form>
           </div>
         </main>
       </div>
       <Footer />
+      <Toaster />
     </div>
   )
 }

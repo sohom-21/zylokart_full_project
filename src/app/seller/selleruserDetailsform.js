@@ -7,7 +7,7 @@ import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight
 import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_data'
 
 const ROLE_OPTIONS = [
-  { label: 'User', value: 'user' },
+  { label: 'Seller', value: 'seller' },
 ]
 
 const validationSchema = Yup.object({
