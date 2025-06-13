@@ -16,7 +16,7 @@ export default function Home() {
       fetch('/api/products?featured=true').then(res => res.json()).catch(() => [])
     ]).then(([cat, prod]) => {
       setCategories(cat.length ? cat : [
-        { name: 'Clothing', img: 'https://placehold.co/547x365' },
+        { name: 'Clothing', img: '/public/LandingPage/Clothing.jpg' },
         { name: 'Accessories', img: 'https://placehold.co/365x365' },
         { name: 'Home', img: 'https://placehold.co/648x365' },
         { name: 'Beauty', img: 'https://placehold.co/365x365' },
@@ -95,7 +95,7 @@ export default function Home() {
 
       {/* Promo Bar */}
       <div className="w-full bg-zinc-800 py-1 px-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over $100. Use code</span>
+        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹1000. Use code</span>
         <span className="text-white text-lg font-bold tracking-wider font-['Inter']">FREESHIP</span>
       </div>
 
