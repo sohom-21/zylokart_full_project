@@ -25,11 +25,11 @@ export default function Home() {
       fetch('/api/categories').then(res => res.json()).catch(() => []),
       fetch('/api/products?featured=true').then(res => res.json()).catch(() => [])
     ]).then(([cat, prod]) => {
-      setCategories(cat.length ? cat : [
-        { name: 'Clothing', img: '/public/LandingPage/Clothing.jpg' },
-        { name: 'Accessories', img: 'https://placehold.co/365x365' },
-        { name: 'Home', img: 'https://placehold.co/648x365' },
-        { name: 'Beauty', img: 'https://placehold.co/365x365' },
+      setCategories([
+        { name: 'Clothing', img: '/LandingPage/Clothing.jpeg' },
+        { name: 'Accessories', img: '/LandingPage/Accessories.jpg' },
+        { name: 'Home', img: '/LandingPage/furniture.jpg' },
+        { name: 'Beauty', img: '/LandingPage/Beauty.jpg' },
       ]);
       setProducts(prod.length ? prod : [
         {
@@ -38,8 +38,8 @@ export default function Home() {
           labelColor: 'bg-zinc-800 text-white',
           category: 'Home',
           title: 'Minimalist Ceramic Vase',
-          price: '$89.00',
-          image: 'https://placehold.co/438x628',
+          price: '₹890.00',
+          image: '/LandingPage/Minimalist.jpg',
           rating: 5,
           ratingCount: 42,
         },
@@ -47,8 +47,8 @@ export default function Home() {
           id: 2,
           category: 'Footwear',
           title: 'Premium Leather Sneakers',
-          price: '$195.00',
-          image: 'https://placehold.co/510x365',
+          price: '₹1950.00',
+          image: '/LandingPage/Shoes.jpg',
           rating: 5,
           ratingCount: 87,
         },
@@ -58,8 +58,8 @@ export default function Home() {
           labelColor: 'bg-zinc-800 text-white',
           category: 'Clothing',
           title: 'Cashmere Sweater',
-          price: '$249.00',
-          image: 'https://placehold.co/438x657',
+          price: '₹1249.00',
+          image: '/LandingPage/Sweater.jpg',
           rating: 5,
           ratingCount: 124,
         },
@@ -83,7 +83,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] md:h-[100vh] flex items-center justify-start overflow-hidden">
         <img
-          src="/Landing page/Hero.jpg"
+          src="/LandingPage/Hero.jpg"
           alt="Hero"
           className="absolute inset-0 w-full h-full object-cover"
         />

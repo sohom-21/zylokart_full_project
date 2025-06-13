@@ -38,11 +38,11 @@ export default function Homepage() {
       fetch('/api/categories').then(res => res.json()).catch(() => []),
       fetch('/api/products?featured=true').then(res => res.json()).catch(() => [])
     ]).then(([cat, prod]) => {
-      setCategories(cat.length ? cat : [
-        { name: 'Clothing', img: 'https://placehold.co/547x365' },
-        { name: 'Accessories', img: 'https://placehold.co/365x365' },
-        { name: 'Home', img: 'https://placehold.co/648x365' },
-        { name: 'Beauty', img: 'https://placehold.co/365x365' },
+      setCategories([
+        { name: 'Clothing', img: '/LandingPage/Clothing.jpeg' },
+        { name: 'Accessories', img: '/LandingPage/Accessories.jpg' },
+        { name: 'Home', img: '/LandingPage/furniture.jpg' },
+        { name: 'Beauty', img: '/LandingPage/Beauty.jpg' },
       ]);
       setProducts(prod.length ? prod : [
         {
@@ -96,7 +96,7 @@ export default function Homepage() {
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] md:h-[100vh] flex items-center justify-start overflow-hidden">
         <img
-          src="/Landing page/Hero.jpg"
+          src="/LandingPage/Hero.jpg"
           alt="Hero"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -118,7 +118,7 @@ export default function Homepage() {
 
       {/* Promo Bar */}
       <div className="w-full bg-zinc-800 py-1 px-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over $100. Use code</span>
+        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹1000. Use code</span>
         <span className="text-white text-lg font-bold tracking-wider font-['Inter']">FREESHIP</span>
       </div>
 
@@ -180,23 +180,6 @@ export default function Homepage() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Become a Seller */}
-      <section className="w-full bg-neutral-200 py-16 border-t border-neutral-200">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col items-center">
-          <h2 className="text-3xl md:text-4xl font-medium font-['Playfair_Display'] text-zinc-800 mb-4 text-center">
-            Wanted to become a Seller on Zylokart
-          </h2>
-          <p className="text-zinc-600 text-lg font-normal font-['Inter'] mb-8 text-center">
-            Are you a creator, brand, or entrepreneur looking to reach a wider audience? Zylokart is always on the lookout for passionate sellers who value quality and customer experience. Join our platform to showcase your unique products, benefit from our secure and fast infrastructure, and grow your business with a community that cares about transparency and innovation. We handle the tech, you focus on what you do best—delivering great products!
-          </p>
-          <Link href="/auth/sellersignup">
-            <button className="px-8 py-4 bg-zinc-800 text-white rounded-3xl font-medium font-['Inter'] hover:bg-zinc-900 transition">
-              Apply to Become a Seller
-            </button>
-          </Link>
         </div>
       </section>
 

@@ -19,10 +19,10 @@ export default function Navbar() {
             <Link href="/" className="font-medium hover:text-amber-400 text-white">
               Home
             </Link>
-            <Link href="/shop" className="font-medium hover:text-amber-400 text-white">
+            <Link href="#" className="font-medium hover:text-amber-400 text-white">
               Shop
             </Link>
-            <Link href="/collections" className="font-medium hover:text-amber-400 text-white">
+            <Link href="#" className="font-medium hover:text-amber-400 text-white">
               Collections
             </Link>
             <Link href="/pages/about" className="font-medium hover:text-amber-400 text-white">
