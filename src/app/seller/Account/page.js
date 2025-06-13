@@ -1,7 +1,7 @@
 // E:/gitHub_Docs/zylokart_full_project/src/app/seller/Account/page.js
 'use client'
 import { useState, useEffect } from 'react'
-import UserForm from '@/app/userProfile/userform'
+import UserForm from '../selleruserDetailsform'
 import SellerForm from '@/app/seller/SellerForm'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
