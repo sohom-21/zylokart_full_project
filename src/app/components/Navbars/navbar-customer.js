@@ -10,8 +10,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation";
+import { signOut } from "@/app/utiils/supabase/auth";
+import supabase from "@/app/utiils/supabase/client";
+
 
 export default function CustomerNavbar() {
+  const router = useRouter();
+  
+  const handleProfileClick = () => {
+    router.push("/customer/profile");
+  };
+  const handleUserlogout = async ()  => {
+    const userSession = await supabase.auth.getSession();
+    signOut();
+    localStorage.removeItem('userSession');
+    localStorage.removeItem("userId");
+    router.push("/");
+  };
+
+
   return (
     <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6 py-3">
       {/* Logo */}
@@ -81,8 +99,9 @@ export default function CustomerNavbar() {
           <DropdownMenuContent align="end" className="pr-0.5">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
             <DropdownMenuItem>Your orders</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleUserlogout}>LogoOut</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

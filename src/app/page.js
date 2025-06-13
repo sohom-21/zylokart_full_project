@@ -3,11 +3,21 @@ import { useEffect, useState } from "react";
 import Navbar from './components/Navbars/Navbar-landing'
 import Footer from "./components/Footer";
 import Link from "next/link";
+import supabase from "./utiils/supabase/client";
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    fetchSession();
+  }, []);
 
   useEffect(() => {
     // Replace these URLs with your backend endpoints
