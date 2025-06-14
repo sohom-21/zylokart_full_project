@@ -1,7 +1,7 @@
 // E:/gitHub_Docs/zylokart_full_project/src/app/seller/Account/page.js
 'use client'
 import { useState, useEffect } from 'react'
-import UserForm from '@/app/customer/profileform'
+import SellerProfileDetails from '../sellerProfileDetails'
 import SellerForm from '@/app/seller/SellerForm'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
@@ -65,7 +65,7 @@ export default function SellerAccountPage() {
             </button>
           </div>
           {currentStep === 1 && (
-            <UserForm
+            <SellerProfileDetails
               initialValues={userData}
               userId={userId}
               onSuccess={handleNext}

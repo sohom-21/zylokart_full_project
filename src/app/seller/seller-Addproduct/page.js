@@ -12,12 +12,12 @@ import { UploadCloud, AlertCircle } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast';
 
 const CATEGORY_OPTIONS = [
-  "Clothing",
+  "clothing",
   "Home decoration",
-  "Beauty",
-  "Furniture",
-  "Footwear",
-  "Accessories"
+  "beauty",
+  "furniture",
+  "footwear",
+  "accessories"
 ];
 
 const validationSchema = Yup.object({
