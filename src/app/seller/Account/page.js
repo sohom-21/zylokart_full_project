@@ -2,9 +2,23 @@
 'use client'
 import { useState, useEffect } from 'react'
 import SellerProfileDetails from '../sellerProfileDetails'
-import SellerForm from '@/app/seller/SellerForm'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
+
+// Utility functions (replace with your actual imports)
+import { getUserById } from '@/app/utiils/supabase/user_data'
+import { getSellerByUserId } from '@/app/utiils/supabase/seller'
+import SellerDetailsUpdate from '../sellerDetailsUpdate'
+
+// Fetch user data
+async function fetchUserById(user_id) {
+  return await getUserById(user_id)
+}
+
+// Fetch seller data
+async function fetchSellerByUserId(user_id) {
+  return await getSellerByUserId(user_id)
+}
 
 export default function SellerAccountPage() {
   const [userId, setUserId] = useState(null)
@@ -70,13 +84,15 @@ export default function SellerAccountPage() {
               userId={userId}
               onSuccess={handleNext}
               isSellerFlow={true}
+              isEdit={true}
             />
           )}
           {currentStep === 2 && (
-            <SellerForm
+            <SellerDetailsUpdate
               initialValues={sellerData}
               userId={userId}
               onBack={handlePrev}
+              isEdit={true}
             />
           )}
         </div>
@@ -86,16 +102,3 @@ export default function SellerAccountPage() {
   )
 }
 
-// Utility functions (replace with your actual imports)
-import { getUserById } from '@/app/utiils/supabase/user_data'
-import { getSellerByUserId } from '@/app/utiils/supabase/seller'
-
-// Fetch user data
-async function fetchUserById(user_id) {
-  return await getUserById(user_id)
-}
-
-// Fetch seller data
-async function fetchSellerByUserId(user_id) {
-  return await getSellerByUserId(user_id)
-}

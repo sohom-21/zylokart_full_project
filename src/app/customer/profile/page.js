@@ -75,7 +75,7 @@ export default function ProfilePage() {
                       <li>Verify your address and area code for accurate service delivery</li>
                     </ul>
                   </div>
-                  <div className="bg-white/30 dark:bg-zinc-700/30 rounded-2xl shadow-lg p-7 text-zinc-700 dark:text-zinc-200">
+                  <div className="bg-white/90 dark:bg-zinc-700/30 rounded-2xl shadow-lg p-7 text-zinc-700 dark:text-zinc-200">
                     <h3 className="text-xl font-semibold mb-3">Need Help?</h3>
                     <p className="text-base leading-relaxed">
                       Our support team is here to help! Contact us through our support portal or visit our comprehensive FAQ section for detailed guidance on managing your profile.

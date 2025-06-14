@@ -2,10 +2,9 @@
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState, useEffect } from 'react'
-import { Building, FileText, CheckCircle, XCircle, Calendar, User, Save } from 'lucide-react'
-import { createClient } from '@supabase/supabase-js'
+import { Building, FileText, CheckCircle, XCircle, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+import supabase from '../utiils/supabase/client'
 
 const validationSchema = Yup.object({
   shop_name: Yup.string().min(2, 'Too short!').max(100, 'Too long!').required('Shop name is required'),
