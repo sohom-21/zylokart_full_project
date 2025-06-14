@@ -4,6 +4,7 @@ import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import supabase from "@/app/utiils/supabase/client";
+import Image from 'next/image';
 import { getProductsForCustomerHomePage } from "@/app/utiils/supabase/products";
 
 
@@ -63,7 +64,7 @@ export default function Homepage() {
               labelColor: product.stock > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
               category: product.category,
               title: product.name,
-              price: product.offered_price ? `₹${product.offered_price.toFixed(2)}` : `₹${product.price.toFixed(2)}`,
+              price: product.price_offered ? `₹${product.price_offered.toFixed(2)}` : `₹${product.price.toFixed(2)}`,
               image: product.image_url,
               rating: 5, // Placeholder, assuming no rating system yet
               ratingCount: 0, // Placeholder
@@ -95,10 +96,13 @@ export default function Homepage() {
 
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] md:h-[100vh] flex items-center justify-start overflow-hidden">
-        <img
+        <Image
           src="/LandingPage/Hero.jpg"
           alt="Hero"
-          className="absolute inset-0 w-full h-full object-cover"
+          layout="fill" // Or specify width and height for fixed size
+          objectFit="cover" // Corresponds to CSS object-fit
+          quality={75} // Optional: default is 75
+          priority // Optional: if this is your LCP element
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="z-10 max-w-3xl px-6 md:ml-16 flex flex-col items-start justify-center h-full text-left">
