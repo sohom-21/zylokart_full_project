@@ -24,6 +24,8 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
+// This file defines the UserForm component.
+// It is a reusable form for user profile details, used for both creation and updates.
 export default function UserForm({ userId: propUserId, onNext }) {
   const router = useRouter()
   const searchParams = useSearchParams()

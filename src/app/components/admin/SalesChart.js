@@ -1,3 +1,5 @@
+// This file defines the SalesChart component for the admin dashboard.
+// It visualizes sales data using a chart.
 "use client";
 import React from "react";
 import {

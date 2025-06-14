@@ -6,6 +6,8 @@ import Footer from '../../components/Footer'
 import { useRouter } from 'next/navigation'
 import { signUp } from '@/app/utiils/supabase/auth'
 
+// This file defines the seller signup page.
+// It handles the registration process for new sellers.
 export default function SellerSignup() {
   const router = useRouter()
   const [form, setForm] = useState({

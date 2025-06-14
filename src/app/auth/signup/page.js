@@ -7,6 +7,8 @@ import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
+// This file defines the user signup page.
+// It handles the registration process for new customers.
 export default function Signup() {
   const [form, setForm] = useState({
     name: '',

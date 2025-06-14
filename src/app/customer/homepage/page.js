@@ -5,6 +5,8 @@ import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import supabase from "@/app/utiils/supabase/client";
 
+// This file defines the customer homepage.
+// It displays featured products, categories, and other relevant information for customers.
 export default function Homepage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);

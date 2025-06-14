@@ -1,6 +1,8 @@
 'use client'
 import Link from 'next/link'
 
+// This file defines the main Footer component.
+// It is used across the application to provide consistent navigation and copyright information.
 export default function Footer() {
   return (
     <footer className="w-full bg-zinc-800 text-zinc-400 pt-12 pb-6 px-4 md:px-8">

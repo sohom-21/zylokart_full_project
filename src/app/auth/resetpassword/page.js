@@ -8,6 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import supabase from "@/app/utiils/supabase/client";
 import LoadingSpinner from "@/assets/LoadingSpinner.svg";
 
+// This file defines the password reset page.
+// It allows users to reset their forgotten passwords.
 function ResetPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

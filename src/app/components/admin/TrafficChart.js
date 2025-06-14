@@ -1,3 +1,5 @@
+// This file defines the TrafficChart component for the admin dashboard.
+// It visualizes website traffic data.
 "use client";
 import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";

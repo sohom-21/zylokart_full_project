@@ -1,3 +1,5 @@
+// This file defines the API route for handling contact form submissions.
+// It processes incoming contact requests and sends notifications.
 export const runtime = 'nodejs';
 
 import nodemailer from 'nodemailer'

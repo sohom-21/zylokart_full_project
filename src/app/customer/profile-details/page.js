@@ -1,4 +1,6 @@
 'use client'
+// This file defines the customer profile details page.
+// It allows customers to view and edit their personal information.
 import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 import UserForm from '@/app/components/userProfile/userform'

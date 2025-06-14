@@ -14,6 +14,8 @@ import {
   Calendar
 } from 'lucide-react'
 
+// This file defines the Admin Companies page.
+// It is used to display and manage company information for the admin.
 export default function CompaniesPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 

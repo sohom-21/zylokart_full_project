@@ -1,3 +1,5 @@
+// This file defines the Admin Settings page.
+// It is used to configure various settings for the admin panel.
 'use client'
 import AdminSidebar from '@/app/components/admin/AdminSidebar'
 import AdminLayout from '@/app/components/admin/AdminLayout'
@@ -19,7 +21,6 @@ import {
   CheckCircle
 } from 'lucide-react'
 import { useState } from 'react'
-
 export default function SettingsPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activeTab, setActiveTab] = useState('general')

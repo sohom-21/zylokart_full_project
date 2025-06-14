@@ -3,6 +3,8 @@ import React from "react";
 import { Bell, Search, ChevronDown, Menu } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+// This file defines the AdminLayout component.
+// It provides a consistent layout for all admin pages, including sidebar and main content area.
 const AdminLayout = ({ children, onSidebarOpen }) => {
   return (
     <div className="flex min-h-screen bg-gray-50 flex-col">

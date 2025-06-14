@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+// This file defines the Navbar component for the landing page.
+// It provides navigation links specific to the unauthenticated landing experience.
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 

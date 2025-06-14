@@ -1,4 +1,6 @@
-"use client";
+'use client'
+// This file defines the Navbar component for customer pages.
+// It provides navigation links and features specific to authenticated customer users.
 import Link from "next/link";
 import { FiShoppingCart, FiHeart, FiUser } from "react-icons/fi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
