@@ -130,7 +130,7 @@ export default function SellerProductList() {
                     products.map((product, idx) => (
                       <tr key={product.id} className="border-b hover:bg-amber-50 transition">
                         <td className="py-3 px-4">
-                          <img src={product.image} alt={product.title} className="w-14 h-14 rounded object-cover border" />
+                          <img src={product.image} alt={product.name} className="w-14 h-14 rounded object-cover border" />
                         </td>
                         <td className="py-3 px-4 font-medium">
                           {editIdx === idx ? (
@@ -141,7 +141,7 @@ export default function SellerProductList() {
                               className="border px-2 py-1 rounded w-full"
                             />
                           ) : (
-                            product.title
+                            product.name
                           )}
                         </td>
                         <td className="py-3 px-4">
