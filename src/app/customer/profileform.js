@@ -8,6 +8,10 @@ import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_d
 
 const ROLE_OPTIONS = [
   { label: 'User', value: 'user' },
+  { label: 'Seller', value: 'seller' },
+  { label: 'Logistics', value: 'logistics' },
+  { label: 'Admin', value: 'admin' },
+  { label: 'Guest', value: 'guest' },
 ]
 
 const validationSchema = Yup.object({
