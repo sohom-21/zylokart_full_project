@@ -4,6 +4,7 @@ import Navbar from './components/Navbars/Navbar-landing'
 import Footer from "./components/Footer";
 import Link from "next/link";
 import supabase from "./utiils/supabase/client";
+import Image from "next/image";
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
@@ -82,9 +83,13 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] md:h-[100vh] flex items-center justify-start overflow-hidden">
-        <img
+        <Image
           src="/LandingPage/Hero.jpg"
           alt="Hero"
+          layout="fill"
+          objectFit="cover"
+          quality={75}
+          priority
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
@@ -124,7 +129,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((cat, i) => (
             <div key={cat.name || i} className="relative rounded-lg overflow-hidden group shadow hover:shadow-lg transition">
-              <img src={cat.img} alt={cat.name} className="w-full h-64 object-cover group-hover:scale-105 transition" />
+              <Image src={cat.img} alt={cat.name} layout="fill" objectFit="cover" quality={75} priority className="w-full h-64 object-cover group-hover:scale-105 transition" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-6 left-6 text-white text-xl font-medium font-['Playfair_Display']">{cat.name}</div>
             </div>
@@ -206,7 +211,6 @@ export default function Home() {
           </form>
         </div>
       </section>
-
       <Footer />
     </div>
   );
