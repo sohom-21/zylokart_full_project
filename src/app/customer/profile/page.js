@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
-import UserForm from '@/app/customer/profileform'
+import UserProfileForm from '@/app/customer/profileform'
 import { User } from 'lucide-react'
 // import { getUserById } from '@/app/utiils/supabase/user_data'
 
@@ -46,10 +46,10 @@ export default function ProfilePage() {
   }, [userId])
 
   return (
-    <div className="min-h-screen flex flex-col custom-bg">
+    <div className="min-h-screen flex flex-col custom-bg-2">
       <CustomerNavbar />
       <main className="flex-1 flex flex-col items-center py-10 px-4 md:px-6">
-        <div className="w-full max-w-4xl">
+        <div className="w-full max-w-7xl rounded-xl shadow-lg p-8">
           <ProfileHeader />
           <div className="glass-card rounded-2xl shadow-xl p-6 md:p-10">
             {isLoading ? (
@@ -59,9 +59,10 @@ export default function ProfilePage() {
             ) : (
               <div className="flex flex-col md:flex-row gap-10 md:gap-16">
                 <div className="flex-1 w-full md:w-2/3">
-                  <UserForm 
+                  <UserProfileForm 
                     userId={userId}
                     className="space-y-6"
+                    isEdit={true}
                   />
                 </div>
                 <div className="hidden md:flex flex-col gap-6 justify-start w-96">

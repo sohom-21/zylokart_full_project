@@ -24,7 +24,7 @@ const validationSchema = Yup.object({
   is_active: Yup.boolean(),
 })
 
-export default function UserForm({ userId: propUserId, isEdit }) {
+export default function UserProfileForm({ userId: propUserId, isEdit }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fixedRole = searchParams.get('role')
@@ -250,7 +250,7 @@ export default function UserForm({ userId: propUserId, isEdit }) {
       {/* Submit */}
       <button
         type="submit"
-        disabled={formik.isSubmitting}
+        disabled={formik.isSubmitting || (isEdit && !formik.dirty)}
         className="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-lg shadow hover:from-indigo-600 hover:to-purple-600 transition flex items-center justify-center gap-2 animate-pulse"
       >
         <Save size={20} /> {formik.isSubmitting ? 'Saving...' : 'Save Profile'}
