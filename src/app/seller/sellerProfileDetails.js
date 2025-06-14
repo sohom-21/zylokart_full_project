@@ -246,7 +246,7 @@ export default function SellerProfileDetails({ userId: propUserId, isEdit }) {
       {/* Submit */}
       <button
         type="submit"
-        disabled={formik.isSubmitting}
+        disabled={formik.isSubmitting || (isEdit && !formik.dirty)}
         className="w-full py-3 rounded-lg bg-black text-white font-bold text-lg shadow hover:bg-gray-800 transition flex items-center justify-center gap-2"
       >
         <Save size={20} /> {formik.isSubmitting ? 'Saving...' : 'Save Profile'}

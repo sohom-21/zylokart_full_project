@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Building, FileText, CheckCircle, XCircle, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import supabase from '../utiils/supabase/client'
+import { getSellerByUserId } from '../utiils/supabase/seller'
 
 const validationSchema = Yup.object({
     shop_name: Yup.string().min(2, 'Too short!').max(100, 'Too long!').required('Shop name is required'),
@@ -21,6 +22,7 @@ function SellerDetailsUpdate({ userId: propUserId , isEdit }) {
         shop_name: '',
         gst_number: '',
         is_verified: false,
+        seller_id: '', // Add seller_id to initial state
         user_id: userId || '',
     })
     const [loading, setLoading] = useState(true)
@@ -31,12 +33,13 @@ function SellerDetailsUpdate({ userId: propUserId , isEdit }) {
                 setLoading(false)
                 return
             }
-            const { data, error } = await supabase.from('Sellers').select('*').eq('user_id', userId).single()
+            const { data, error } = await getSellerByUserId(userId)
             if (data) {
                 setInitialValues({
                     shop_name: data.shop_name || '',
                     gst_number: data.gst_number || '',
                     is_verified: data.is_verified ?? false,
+                    seller_id: data.seller_id || '', // Ensure seller_id is set from fetched data
                     user_id: data.user_id,
                 })
             }
@@ -49,22 +52,39 @@ function SellerDetailsUpdate({ userId: propUserId , isEdit }) {
         initialValues,
         enableReinitialize: true,
         validationSchema,
-        onSubmit: async (values, { setSubmitting, resetForm }) => {
+        onSubmit: async (values, { setSubmitting }) => {
             setSubmitting(true)
-            const { data, error } = await supabase.from('Sellers').upsert({
-                user_id: values.user_id,
+            let responseData, responseError;
+
+            // Since this component is for updates and expects seller_id
+            if (!values.seller_id) {
+                alert('Error: Seller ID is missing. Cannot update details.');
+                setSubmitting(false);
+                return;
+            }
+
+            const updatePayload = {
                 shop_name: values.shop_name,
                 gst_number: values.gst_number,
                 is_verified: values.is_verified,
-            }, { onConflict: 'user_id' })
+                // user_id should typically not be updated here as it's a foreign key
+                // and seller_id is the primary key for this update operation.
+            };
+
+            ({ data: responseData, error: responseError } = await supabase
+                .from('Sellers')
+                .update(updatePayload)
+                .eq('seller_id', values.seller_id) // Update using seller_id
+                .select() // To get the updated data back
+            );
 
             setSubmitting(false)
-            if (error) {
-                alert('Error saving seller details: ' + error.message)
+            if (responseError) {
+                alert('Error saving seller details: ' + responseError.message)
             } else {
-                // Set seller_id in localStorage after onboarding
-                if (data && data[0] && data[0].seller_id) {
-                    localStorage.setItem('seller_id', data[0].seller_id);
+                // Ensure seller_id in localStorage is up-to-date
+                if (responseData && responseData[0] && responseData[0].seller_id) {
+                    localStorage.setItem('seller_id', responseData[0].seller_id);
                 }
                 alert('Seller details saved successfully!')
                 setTimeout(() => {
@@ -158,7 +178,7 @@ function SellerDetailsUpdate({ userId: propUserId , isEdit }) {
             {/* Submit */}
             <button
                 type="submit"
-                disabled={formik.isSubmitting}
+                disabled={formik.isSubmitting || (isEdit && !formik.dirty)}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-indigo-500 text-white font-semibold shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <Save size={20} /> {formik.isSubmitting ? 'Saving...' : 'Save Seller Details'}
