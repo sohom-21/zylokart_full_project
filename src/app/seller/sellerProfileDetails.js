@@ -4,10 +4,10 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState, useEffect } from 'react'
 import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
-// import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_data'
+import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_data'
 
 const ROLE_OPTIONS = [
-  { label: 'User', value: 'user' },
+  { label: 'Seller', value: 'seller' },
 ]
 
 const validationSchema = Yup.object({
