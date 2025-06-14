@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HiOutlineViewGrid, HiOutlineCreditCard, HiOutlineCube, HiOutlineClipboardList, HiOutlineUser, HiOutlineChevronDoubleLeft, HiOutlineChevronDoubleRight } from 'react-icons/hi'
 
+// This file defines the SellerSidebar component.
+// It provides navigation links for the seller dashboard.
 export default function Sellersidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);

@@ -1,3 +1,5 @@
+// It is used to display and manage admin account details.
+// This file defines the Admin Account page.
 'use client'
 import AdminSidebar from '@/app/components/admin/AdminSidebar'
 import AdminLayout from '@/app/components/admin/AdminLayout'

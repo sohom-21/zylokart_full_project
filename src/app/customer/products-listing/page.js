@@ -97,3 +97,5 @@ export default function Productslistings() {
     </div>
   )
 }
+// This file defines the product listing page.
+// It displays a list of products, with options for filtering and sorting.

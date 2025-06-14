@@ -1,3 +1,5 @@
+// This file defines the LatestProducts component for the admin dashboard.
+// It displays a list of the most recently added products.
 "use client";
 import React from "react";
 import { MoreHorizontal, ArrowUpRight, ArrowDownRight } from "lucide-react";

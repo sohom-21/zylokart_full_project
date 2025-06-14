@@ -9,6 +9,8 @@ import {
   ArrowDownRight
 } from 'lucide-react'
 
+// This file defines the StatsCards component for the admin dashboard.
+// It displays key statistical metrics in card format.
 const StatsCards = () => {  const stats = [
     {
       title: 'BUDGET',

@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react'
 import { User, Mail, Phone, MapPin, Save, Shield, Globe, ToggleLeft, ToggleRight, CheckCircle, XCircle } from 'lucide-react'
 import { getUserById,updateUserById,insertUser } from '../utiils/supabase/user_data'
 
+// This file defines the customer profile form component.
+// It is used for creating and updating customer profile information.
 const ROLE_OPTIONS = [
   { label: 'User', value: 'user' },
   { label: 'Seller', value: 'seller' },

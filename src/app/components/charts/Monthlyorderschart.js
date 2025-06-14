@@ -1,4 +1,6 @@
-"use client";
+'use client'
+// This file defines the Monthlyorderschart component.
+// It displays a chart showing monthly order trends.
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,

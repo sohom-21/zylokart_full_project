@@ -6,6 +6,8 @@ import UserProfileForm from '@/app/customer/profileform'
 import { User } from 'lucide-react'
 // import { getUserById } from '@/app/utiils/supabase/user_data'
 
+// This file defines the customer profile page.
+// It displays the customer's personal information and provides options to manage their account.
 function ProfileHeader() {
   return (
     <div className="flex items-center gap-4 p-6 bg-gradient-to-r from-indigo-500/80 to-purple-500/80 rounded-2xl shadow-lg mb-8">

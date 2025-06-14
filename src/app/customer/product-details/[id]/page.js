@@ -19,6 +19,8 @@ const fallbackProduct = {
   reviews: [],
 }
 
+// This file defines the product details page.
+// It displays detailed information about a specific product, including images, description, and price.
 export default function ProductDetail() {
   const { id } = useParams()
   const [product, setProduct] = useState(null)

@@ -1,4 +1,6 @@
 'use client'
+// This file defines the Navbar component for seller pages.
+// It provides navigation links and features specific to authenticated seller users.
 import Link from 'next/link'
 import { FiUser, FiBox, FiBarChart2, FiLogOut, FiHome, FiMenu } from 'react-icons/fi'
 import { useState } from 'react'

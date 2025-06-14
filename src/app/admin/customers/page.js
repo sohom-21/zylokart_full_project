@@ -13,6 +13,8 @@ import {
   MapPin
 } from 'lucide-react'
 
+// This file defines the Admin Customers page.
+// It is used to display and manage customer information for the admin.
 export default function CustomersPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 

@@ -1,4 +1,6 @@
-"use client";
+'use client'
+// This file defines the Doughnutchart component.
+// It is a reusable component for displaying data in a doughnut chart format.
 import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,

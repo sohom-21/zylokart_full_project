@@ -8,6 +8,8 @@ import { Toaster, toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { getUserById } from '@/app/utiils/supabase/user_data'
 import { getSellerByUserId } from '@/app/utiils/supabase/seller'
+// This file defines the user login page.
+// It handles user authentication and redirects upon successful login.
 export default function Login() {
   const [form, setForm] = useState({
     email: '',

@@ -1,4 +1,6 @@
 'use client'
+// This file defines the main Admin Dashboard page.
+// It serves as the entry point for the admin panel, displaying key metrics and navigation.
 import { useState } from "react";
 import AdminSidebar from '@/app/components/admin/AdminSidebar';
 import AdminLayout from '@/app/components/admin/AdminLayout'

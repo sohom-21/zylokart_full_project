@@ -1,4 +1,7 @@
-"use client";
+'use client'
+
+// This file defines the LatestOrders component for the admin dashboard.
+// It displays a list of the most recent orders.
 import React from "react";
 import {
   MoreHorizontal,

@@ -1,4 +1,7 @@
-"use client";
+'use client'
+
+// This file defines the AdminSidebar component.
+// It provides navigation links for the admin panel.
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {

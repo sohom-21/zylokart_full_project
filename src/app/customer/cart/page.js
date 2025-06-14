@@ -23,6 +23,8 @@ const sampleCart = [
   },
 ]
 
+// This file defines the customer's shopping cart page.
+// It displays items added to the cart and allows for quantity adjustments and checkout.
 export default function CartPage() {
   const [cart, setCart] = useState([])
   const [coupon, setCoupon] = useState('')
