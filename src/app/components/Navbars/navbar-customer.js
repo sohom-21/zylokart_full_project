@@ -44,7 +44,7 @@ export default function CustomerNavbar() {
       {/* Main Nav */}
       <div className="hidden md:flex gap-8">
         <Link
-          href="/"
+          href="/customer/homepage"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           Home
@@ -56,7 +56,7 @@ export default function CustomerNavbar() {
           Shop
         </Link>
         <Link
-          href="/collections"
+          href="/customer/products-listing"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           Collections

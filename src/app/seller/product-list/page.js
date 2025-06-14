@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { getProductsBySellerId } from '@/app/utiils/supabase/products'
+import { getProductsBySellerId, getSellerById, updateProductById } from '@/app/utiils/supabase/products'
 import supabase from '@/app/utiils/supabase/client'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
@@ -68,7 +68,7 @@ export default function SellerProductList() {
       discount: editForm.discount ? Number(editForm.discount) : null,
       stock: Number(editForm.stock),
       category: editForm.category,
-      image: editForm.image,
+      image: editForm.image_url,
       description: editForm.description,
     }).eq('id', id)
     if (error) {
@@ -130,7 +130,7 @@ export default function SellerProductList() {
                     products.map((product, idx) => (
                       <tr key={product.id} className="border-b hover:bg-amber-50 transition">
                         <td className="py-3 px-4">
-                          <img src={product.image} alt={product.name} className="w-14 h-14 rounded object-cover border" />
+                          <img src={product.image_url} alt={product.name} className="w-14 h-14 rounded object-cover border" />
                         </td>
                         <td className="py-3 px-4 font-medium">
                           {editIdx === idx ? (

@@ -141,7 +141,7 @@ export default function Homepage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((cat, i) => (
             <div key={cat.name || i} className="relative rounded-lg overflow-hidden group shadow hover:shadow-lg transition">
-              <Image src={cat.img} alt={cat.name} layout="fill" objectFit="cover" quality={75} className="w-full h-64 object-cover group-hover:scale-105 transition" />
+              <Image src={cat.img} alt={cat.name} width={550} height={600} priority quality={75} className="w-full h-64 object-cover group-hover:scale-105 transition" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-6 left-6 text-white text-xl font-medium font-['Playfair_Display']">{cat.name}</div>
             </div>
