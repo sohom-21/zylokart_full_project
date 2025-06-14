@@ -73,3 +73,13 @@ export async function updateProductImageUrl(id, imageUrl) {
     .select();
   return { data, error };
 }
+
+export async function getProductsForCustomerHomePage(category){
+    const{data, error} = await supabase
+    .from('Products')
+    .select('id, name, price, image_url,discount,price_offered,description, category')
+    .eq('category', category)
+    .order('stock', {ascending: false})
+
+    return {data, error}
+};
