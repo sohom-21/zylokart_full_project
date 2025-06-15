@@ -1,8 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
-import { getCartItems, updateCartQuantity, removeFromCart } from '@/app/utiils/supabase/cart'
+import { getCartItems, updateCartQuantity, removeFromCart, clearCart } from '@/app/utiils/supabase/cart'
+import { createOrdersFromCart } from '@/app/utiils/supabase/orders'
 import { Trash2, Plus, Minus } from 'lucide-react'
 import Link from "next/link";
 
@@ -12,6 +14,7 @@ export default function CartPage() {
   const [cart, setCart] = useState([])
   const [coupon, setCoupon] = useState('')
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     fetchCartItems()
@@ -65,6 +68,43 @@ export default function CartPage() {
     }
     
     setCart(cart.filter(item => item.id !== id))
+  }
+
+  const handleCheckout = async () => {
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+      alert('Please log in to proceed with checkout')
+      return
+    }
+
+    if (cart.length === 0) {
+      alert('Your cart is empty')
+      return
+    }
+
+    try {
+      // Create orders from cart items
+      const { data, error } = await createOrdersFromCart(userId, cart)
+      
+      if (error) {
+        console.error('Error creating orders:', error)
+        alert('Failed to place order. Please try again.')
+        return
+      }
+
+      // Clear the cart after successful order creation
+      const { error: clearError } = await clearCart(userId)
+      if (clearError) {
+        console.error('Error clearing cart:', clearError)
+        // Don't return here, order was successful even if cart wasn't cleared
+      }
+
+      // Navigate to checkout page
+      router.push('/customer/checkout')
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('An error occurred during checkout. Please try again.')
+    }
   }
 
   if (loading) {
@@ -183,12 +223,12 @@ export default function CartPage() {
                   <button className="w-full bg-gray-200 text-gray-700 py-2 rounded hover:bg-gray-300">
                     Apply Coupon
                   </button>
-                </div>
-                <Link href="/customer/checkout">
-                  <button className="w-full bg-amber-300 text-black py-3 rounded font-medium hover:bg-amber-400 transition">
-                    Proceed to Checkout
-                  </button>
-                </Link>
+                </div>                <button 
+                  onClick={handleCheckout}
+                  className="w-full bg-amber-300 text-black py-3 rounded font-medium hover:bg-amber-400 transition"
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </div>
           </div>
