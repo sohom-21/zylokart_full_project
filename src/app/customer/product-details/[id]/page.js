@@ -64,7 +64,7 @@ export default function ProductDetail() {
           {/* Left: Images */}
           <div className="flex flex-col md:flex-row gap-6 flex-1">
             <div className="flex md:flex-col gap-4">
-              {[product.image_url_1, product.image_url_2, product.image_url_3, product.image_url_4].filter(Boolean).map((img, i) => (
+              {[product.image_url,product.image_url_1, product.image_url_2, product.image_url_3, product.image_url_4].filter(Boolean).map((img, i) => (
                 <img
                   key={i}
                   src={img}
