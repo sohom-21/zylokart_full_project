@@ -69,9 +69,9 @@ export default function Signup() {
       setLoading(false)
     }
   }
-
+//bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,_#7175CC_17%,_rgba(66,_52,_147,_0.89)_87%)]
   return (
-    <div className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,_#7175CC_17%,_rgba(66,_52,_147,_0.89)_87%)]">
+    <div className="min-h-screen flex flex-col custom-bg-2">
       <Navbar />
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-12 gap-12 max-w-6xl mx-auto w-full">
         {/* Left: Shop at your leisure */}
@@ -84,7 +84,7 @@ export default function Signup() {
           </span>
         </div>
         {/* Right: Signup Form */}
-        <div className="flex-1 w-full max-w-md bg-white/20 rounded-2xl shadow-lg border border-white/20 p-8 backdrop-blur-md">
+        <div className="flex-1 w-full max-w-md glass-card hover:glass-card-hover rounded-2xl shadow-lg border border-white/20 p-8 backdrop-blur-md">
           <div className="flex justify-center mb-6">
             <span className="text-3xl font-bold font-['Playfair_Display'] text-white tracking-widest">Zylokart</span>
           </div>
