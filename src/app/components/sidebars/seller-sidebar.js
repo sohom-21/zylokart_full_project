@@ -121,7 +121,7 @@ export default function Sellersidebar() {
         </Link>
       </nav>
       {/* User section at bottom */}
-      <div className={`mt-auto p-4 transition-all duration-200 ${collapsed ? 'flex justify-center' : ''}`}>
+      {/* <div className={`mt-auto p-4 transition-all duration-200 ${collapsed ? 'flex justify-center' : ''}`}>
         <div className={`bg-slate-800 rounded-lg p-4 flex items-center ${collapsed ? 'justify-center' : 'space-x-3'}`}>
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
             SL
@@ -134,8 +134,8 @@ export default function Sellersidebar() {
               <p className="text-xs text-gray-400 truncate">Seller Panel</p>
             </div>
           )}
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </aside>
   )
 }

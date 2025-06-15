@@ -28,7 +28,7 @@ export default function SellerNavbar() {
 
         {/* Center Nav */}
         <div className="hidden md:flex flex-1 justify-center gap-8 items-center">
-          <Link href="/seller/sellerhomepage" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
+          <Link href="/seller/seller-homepage" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
             <FiHome className="text-xl" /> Home
           </Link>
           <Link href="/seller/product-list" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
@@ -37,7 +37,7 @@ export default function SellerNavbar() {
           <Link href="/seller/seller-dashboard" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
             <FiBarChart2 className="text-xl" /> Dashboard
           </Link>
-          <Link href="/seller/profile" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
+          <Link href="/seller/Account" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
             <FiUser className="text-xl" /> Profile
           </Link>
         </div>

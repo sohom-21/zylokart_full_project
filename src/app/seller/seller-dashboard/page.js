@@ -1,45 +1,182 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
-import SellerDashboardChart from '@/app/components/charts/Monthlyorderschart'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
+import {
+    getSellerOrdersWithDetails,
+    getSellerOrdersByStatus,
+    updateSellerOrderStatus,
+    getSellerOrderStats,
+    searchSellerOrders
+} from '@/app/utiils/supabase/seller-orders'
+import { getSellerByUserId } from '@/app/utiils/supabase/seller'
+import SellerDashboardChart from '@/app/components/charts/Monthlyorderschart'
 import SellerDoughnutChart from '@/app/components/charts/Doughnutchart'
 
 export default function SellerDashboard() {
-    // Example state for backend data
+    const [orders, setOrders] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [currentSeller, setCurrentSeller] = useState(null)
+    const [filteredOrders, setFilteredOrders] = useState([])
+    const [statusFilter, setStatusFilter] = useState('all')
+    const [searchTerm, setSearchTerm] = useState('')
+    const [updateLoading, setUpdateLoading] = useState({})
+    const [selectedOrders, setSelectedOrders] = useState([])
     const [stats, setStats] = useState({
-        products: 0,
-        payments: 0,
-        recentOrders: 0,
-        user: { name: '', role: '' },
-        orders: [],
         chartData: [],
     });
-    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        initializeSeller()
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    async function initializeSeller() {
+        try {
+            const userId = localStorage.getItem('userId')
+            if (!userId) {
+                console.error('No user ID found')
+                setLoading(false)
+                return
+            }
+
+            const { data: seller, error: sellerError } = await getSellerByUserId(userId)
+            if (sellerError || !seller) {
+                console.error('Seller not found:', sellerError)
+                setLoading(false)
+                return
+            }
+
+            setCurrentSeller(seller)
+            await fetchOrders(seller.seller_id)
+            await fetchStats(seller.seller_id)
+        } catch (error) {
+            console.error('Error initializing seller:', error)
+            setLoading(false)
+        }
+    }
+
+    async function fetchOrders(seller_id) {
+        setLoading(true)
+        try {
+            const { data, error } = await getSellerOrdersWithDetails(seller_id, 1, 50)
+            if (error) {
+                console.error('Error fetching orders:', error)
+                setOrders([])
+            } else {
+                setOrders(data || [])
+                setFilteredOrders(data || [])
+            }
+        } catch (e) {
+            console.error('Fetch orders error:', e)
+            setOrders([])
+        }
+        setLoading(false)
+    }
+
+    async function fetchStats(seller_id) {
+        try {
+            const { data, error } = await getSellerOrderStats(seller_id)
+            if (!error && data) {
+                setStats(data)
+            }
+        } catch (error) {
+            console.error('Error fetching stats:', error)
+        }
+    }
+
+    async function handleStatusUpdate(orderId, newStatus) {
+        setUpdateLoading(prev => ({ ...prev, [orderId]: true }))
+        try {
+            const { data, error } = await updateSellerOrderStatus(orderId, newStatus)
+            if (error) {
+                alert('Failed to update order status')
+                return
+            }
+
+            // Update local state
+            setOrders(prev => prev.map(order =>
+                order.id === orderId ? { ...order, status: newStatus } : order
+            ))
+            setFilteredOrders(prev => prev.map(order =>
+                order.id === orderId ? { ...order, status: newStatus } : order
+            ))
+
+            // Refresh stats
+            if (currentSeller) {
+                await fetchStats(currentSeller.seller_id)
+            }
+        } catch (error) {
+            console.error('Error updating status:', error)
+            alert('Failed to update order status')
+        } finally {
+            setUpdateLoading(prev => ({ ...prev, [orderId]: false }))
+        }
+    }
+    const filterOrders = useCallback(() => {
+        let filtered = orders
+
+        // Filter by status
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(order => order.status === statusFilter)
+        }
+
+        // Filter by search term
+        if (searchTerm) {
+            filtered = filtered.filter(order =>
+                order.id.toString().includes(searchTerm.toLowerCase()) ||
+                order.Products?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                order.Users?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                order.Users?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        }
+
+        setFilteredOrders(filtered)
+    }, [orders, statusFilter, searchTerm])
 
     useEffect(() => {
-        // Replace this with your actual API endpoint
-        async function fetchDashboardData() {
-            setLoading(true);
-            try {
-                const res = await fetch('/api/seller/dashboard', { cache: 'no-store' });
-                const data = await res.json();
-                setStats({
-                    products: data.products,
-                    payments: data.payments,
-                    recentOrders: data.recentOrders,
-                    user: data.user,
-                    orders: data.orders,
-                    chartData: data.chartData,
-                });
-            } catch (e) {
-                // Handle error or show fallback UI
-            }
-            setLoading(false);
+        filterOrders()
+    }, [filterOrders])
+
+    function getStatusColor(status) {
+        switch (status) {
+            case 'delivered':
+                return 'bg-green-100 text-green-800 border-green-200'
+            case 'processing':
+                return 'bg-blue-100 text-blue-800 border-blue-200'
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+            case 'cancelled':
+                return 'bg-red-100 text-red-800 border-red-200'
+            default:
+                return 'bg-gray-100 text-gray-800 border-gray-200'
         }
-        fetchDashboardData();
-    }, []);
+    }
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount)
+    } if (!currentSeller && !loading) {
+        return (
+            <div className="min-h-screen w-full bg-gradient-to-br from-amber-50 via-white to-stone-100 flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+                    <p className="text-gray-600">You need to be a registered seller to access this page.</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-amber-50 via-white to-stone-100 flex flex-col">
@@ -49,49 +186,82 @@ export default function SellerDashboard() {
                 <main className="flex-1 px-6 md:px-12 py-8 bg-transparent">
                     {/* Topbar */}
                     <div className="w-full h-20 bg-white/80 shadow-lg flex items-center px-8 mb-10 rounded-3xl border border-stone-100 backdrop-blur-md">
-                        <div className="flex-1 text-3xl font-extrabold text-neutral-950 tracking-tight">Overview</div>
+                        <div className="flex-1">
+                            <h1 className="text-3xl font-extrabold text-neutral-950 tracking-tight">Overview</h1>
+                            <p className="text-sm text-gray-600 mt-1">Manage and track your buisness</p>
+                        </div>
                         <div className="flex items-center gap-4">
-                            <div className="text-right">
-                                <div className="text-zinc-800 text-base font-semibold">
-                                    {stats.user.name || 'Loading...'}
-                                </div>
-                                <div className="text-gray-400 text-xs">
-                                    {stats.user.role || ''}
-                                </div>
+                            <div className="text-right text-sm">
+                                <div className="font-semibold text-gray-900">{currentSeller?.shop_name || 'Seller'}</div>
+                                <div className="text-gray-500">Online</div>
                             </div>
-                            <img src="https://placehold.co/40x40" alt="User" className="w-10 h-10 rounded-full border-2 border-amber-200 shadow" />
-                            <span className="w-3 h-3 bg-red-600 rounded-full inline-block" />
+                            <span className="w-3 h-3 bg-green-500 rounded-full inline-block" />
                         </div>
                     </div>
 
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                        <div className="bg-gradient-to-br from-amber-100 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-amber-200 hover:scale-[1.02] transition-transform">
-                            <div className="text-4xl font-black text-neutral-800 mb-2">
-                                {loading ? '...' : stats.products}
+                    {/* Statistics Cards */}
+                    {stats && (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                            <div className="bg-white/90 rounded-2xl p-6 shadow-lg border border-stone-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Total Payments Received</p>
+                                        <p className="text-2xl font-bold text-gray-900">{stats.total_orders}</p>
+                                    </div>
+                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-neutral-500 text-base font-medium">Products</div>
-                            <button className="mt-6 bg-orange-500 text-white px-7 py-2.5 rounded-lg font-semibold hover:bg-orange-600 transition shadow">
-                                View Products
-                            </button>
-                        </div>
-                        <div className="bg-gradient-to-br from-blue-100 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-blue-200 hover:scale-[1.02] transition-transform">
-                            <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold mb-2 shadow-lg">
-                                {loading ? '...' : stats.payments}
+                            <div className="bg-white/90 rounded-2xl p-6 shadow-lg border border-stone-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                                        <p className="text-2xl font-bold text-gray-900">{stats.total_orders}</p>
+                                    </div>
+                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-neutral-500 text-base font-medium">Payments Received</div>
-                        </div>
-                        <div className="bg-gradient-to-br from-amber-200 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-amber-300 hover:scale-[1.02] transition-transform">
-                            <div className="w-16 h-16 rounded-full bg-amber-300 flex items-center justify-center text-black text-3xl font-bold mb-2 shadow-lg">
-                                {loading ? '...' : stats.recentOrders}
+
+                            <div className="bg-white/90 rounded-2xl p-6 shadow-lg border border-stone-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Revenue</p>
+                                        <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.total_revenue)}</p>
+                                    </div>
+                                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-neutral-500 text-base font-medium">Recent Orders</div>
+
+                            <div className="bg-white/90 rounded-2xl p-6 shadow-lg border border-stone-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Competed Transactions</p>
+                                        <p className="text-2xl font-bold text-green-600">{stats.pending_orders}</p>
+                                    </div>
+                                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="flex flex-col lg:flex-row gap-8 mb-10 w-full">
                         {/* Monthly Orders Chart */}
-                        <div className="bg-white/90 rounded-3xl shadow-xl p-8 flex-1 border border-stone-100 min-w-[320px]">
+                        <div className="bg-white/90 rounded-3xl shadow-xl p-8 flex-1 border border-stone-100">
                             <div className="text-lg font-semibold text-neutral-800 mb-1">Monthly Orders</div>
                             <div className="text-sm text-neutral-500 mb-4">Orders placed each month</div>
                             <SellerDashboardChart chartData={stats.chartData} loading={loading} />
@@ -107,46 +277,79 @@ export default function SellerDashboard() {
                     <div className="bg-white/90 rounded-3xl shadow-xl p-8 border border-stone-100">
                         <div className="text-lg font-extrabold text-neutral-800 mb-6">Recent Orders</div>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full text-sm">
-                                <thead>
-                                    <tr className="text-left text-neutral-500 border-b">
-                                        <th className="py-3 px-4 font-semibold">Order No</th>
-                                        <th className="py-3 px-4 font-semibold">Customer</th>
-                                        <th className="py-3 px-4 font-semibold">Store/Market</th>
-                                        <th className="py-3 px-4 font-semibold">Date</th>
-                                        <th className="py-3 px-4 font-semibold">Status</th>
-                                    </tr>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider truncate">Product</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>                                    </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="bg-white divide-y divide-gray-200">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan={5} className="py-6 text-center text-gray-400">Loading...</td>
+                                            <td colSpan={7} className="px-6 py-12 text-center">
+                                                <div className="flex items-center justify-center">
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+                                                    <span className="ml-3 text-gray-500">Loading orders...</span>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    ) : stats.orders.length === 0 ? (
+                                    ) : filteredOrders.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="py-6 text-center text-gray-400">No orders found.</td>
+                                            <td colSpan={7} className="px-6 py-12 text-center">
+                                                <div className="text-gray-400">
+                                                    <svg className="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                    <p className="mt-2 text-sm font-medium">No orders found</p>
+                                                    <p className="text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ) : (
-                                        stats.orders.map((order, idx) => (
-                                            <tr
-                                                key={order.id || idx}
-                                                className="border-b hover:bg-amber-50 transition"
-                                            >
-                                                <td className="py-3 px-4 font-medium">{order.orderNo}</td>
-                                                <td className="py-3 px-4">{order.customer}</td>
-                                                <td className="py-3 px-4">{order.store}</td>
-                                                <td className="py-3 px-4">{order.date}</td>
-                                                <td className="py-3 px-4">
-                                                    <span
-                                                        className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                                                            order.status === 'Completed'
-                                                                ? 'bg-green-400'
-                                                                : order.status === 'Processing'
-                                                                    ? 'bg-orange-400'
-                                                                    : 'bg-gray-300'
-                                                        }`}
-                                                    ></span>
-                                                    {order.status}
+                                        filteredOrders.map((order) => (
+                                            <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">#{order.id}</div>
+                                                    <div className="text-sm text-gray-500">Qty: {order.quantity}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center">                            {order.Products?.image_url && (
+                                                        <div className="flex-shrink-0 h-10 w-10">
+                                                            <img
+                                                                className="h-12 w-12 rounded object-cover border"
+                                                                src={order.Products.image_url}
+                                                                alt={order.Products.name || "Product"}
+                                                            // className="h-20 w-20 object-cover rounded"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                        <div className="ml-4">
+                                                            <div className="text-sm font-medium text-gray-900 truncate max-w-30">{order.Products?.name}</div>
+                                                            <div className="text-sm text-gray-500">{order.Products?.category}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">{order.Users?.name || 'N/A'}</div>
+                                                    <div className="text-sm text-gray-500">{order.Users?.email}</div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">{formatCurrency(order.total_price)}</div>
+                                                    <div className="text-sm text-gray-500">
+                                                        {formatCurrency(order.Products?.price_offered || order.Products?.price || 0)} × {order.quantity}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {formatDate(order.created_at)}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(order.status)}`}>
+                                                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         ))

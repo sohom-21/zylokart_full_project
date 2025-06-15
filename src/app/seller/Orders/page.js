@@ -343,15 +343,15 @@ export default function SellerOrdersPage() {
                           <div className="flex items-center">                            {order.Products?.image_url && (
                               <div className="flex-shrink-0 h-10 w-10">
                                 <img 
-                                  className="h-10 w-10 rounded object-cover border" 
+                                  className="h-12 w-12 rounded object-cover border" 
                                   src={order.Products.image_url} 
                                   alt={order.Products.name || "Product"} 
-                                  className="h-20 w-20 object-cover rounded"
+                                  // className="h-20 w-20 object-cover rounded"
                                 />
                               </div>
                             )}
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{order.Products?.name}</div>
+                              <div className="text-sm font-medium text-gray-900 truncate max-w-50">{order.Products?.name}</div>
                               <div className="text-sm text-gray-500">{order.Products?.category}</div>
                             </div>
                           </div>
