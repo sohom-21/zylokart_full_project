@@ -100,7 +100,7 @@ export default function Home() {
 
       {/* Promo Bar */}
       <div className="w-full bg-zinc-800 py-1 px-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹1000. Use code</span>
+        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹500. Use code</span>
         <span className="text-white text-lg font-bold tracking-wider font-['Inter']">FREESHIP</span>
       </div>
 

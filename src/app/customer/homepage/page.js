@@ -125,7 +125,7 @@ export default function Homepage() {
 
       {/* Promo Bar */}
       <div className="w-full bg-zinc-800 py-1 px-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹1000. Use code</span>
+        <span className="text-white text-sm tracking-wider font-['Inter']">Free shipping on all orders over ₹500. Use code</span>
         <span className="text-white text-lg font-bold tracking-wider font-['Inter']">FREESHIP</span>
       </div>
 
@@ -206,7 +206,7 @@ export default function Homepage() {
       </section>
 
       {/* Newsletter */}
-      <section className="w-full bg-neutral-100 py-16">
+      {/* <section className="w-full bg-neutral-100 py-16">
         <div className="max-w-2xl mx-auto px-4 flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-medium font-['Playfair_Display'] text-zinc-800 mb-4 text-center">Join Our Community</h2>
           <p className="text-stone-500 text-lg font-normal font-['Inter'] mb-8 text-center">
@@ -223,7 +223,7 @@ export default function Homepage() {
             </button>
           </form>
         </div>
-      </section>
+      </section> */}
 
       <Footer />
     </div>
