@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, Reorder, AnimatePresence } from 'framer-motion';
-import { ThumbsUpIcon, DotsVerticalIcon, ExpandIcon, PlusIcon, CloseIcon } from './Icons';
+import { DotsVerticalIcon, ExpandIcon, PlusIcon, CloseIcon } from './Icons';
 import { AddIcon } from '../framer-motion_sandbox example/AddIcon';
 import { CloseIcon as TabCloseIcon } from '../framer-motion_sandbox example/CloseIcon';
+import useTypewriter, { useMultiTypewriter } from '../utils/typewrite';
 
 // SVG imports (we'll use them as icons for categories)
 import icon1 from '../assets/1.svg';
@@ -15,48 +16,56 @@ import icon6 from '../assets/6.svg';
 import icon7 from '../assets/7.svg';
 import icon8 from '../assets/8.svg';
 
+// ▼▼▼ DEFINE THE ARRAY OUTSIDE THE COMPONENT ▼▼▼
+const allCategories = [
+    { icon: icon1, label: "Electronics", description: "Latest gadgets and tech", bgGradient: "from-blue-500 to-purple-600" },
+    { icon: icon2, label: "Fashion", description: "Trending styles", bgGradient: "from-pink-500 to-rose-600" },
+    { icon: icon3, label: "Home & Garden", description: "Living essentials", bgGradient: "from-green-500 to-emerald-600" },
+    { icon: icon4, label: "Sports", description: "Athletic gear", bgGradient: "from-orange-500 to-red-600" },
+    { icon: icon5, label: "Books", description: "Knowledge & stories", bgGradient: "from-indigo-500 to-blue-600" },
+    { icon: icon6, label: "Beauty", description: "Self-care products", bgGradient: "from-purple-500 to-pink-600" },
+    { icon: icon7, label: "Automotive", description: "Car accessories", bgGradient: "from-gray-500 to-slate-600" },
+    { icon: icon8, label: "Gaming", description: "Entertainment hub", bgGradient: "from-cyan-500 to-blue-600" }
+];
+
 const ZyloKartDashboard = ({ addToCardRefs }) => {
     const salesRef = useRef(null);
     const ordersRef = useRef(null);
     const inventoryRef = useRef(null);
 
-    // Ecommerce categories with SVG icons
-    const allCategories = [
-        { icon: icon1, label: "Electronics", description: "Latest gadgets and tech", bgGradient: "from-blue-500 to-purple-600" },
-        { icon: icon2, label: "Fashion", description: "Trending styles", bgGradient: "from-pink-500 to-rose-600" },
-        { icon: icon3, label: "Home & Garden", description: "Living essentials", bgGradient: "from-green-500 to-emerald-600" },
-        { icon: icon4, label: "Sports", description: "Athletic gear", bgGradient: "from-orange-500 to-red-600" },
-        { icon: icon5, label: "Books", description: "Knowledge & stories", bgGradient: "from-indigo-500 to-blue-600" },
-        { icon: icon6, label: "Beauty", description: "Self-care products", bgGradient: "from-purple-500 to-pink-600" },
-        { icon: icon7, label: "Automotive", description: "Car accessories", bgGradient: "from-gray-500 to-slate-600" },
-        { icon: icon8, label: "Gaming", description: "Entertainment hub", bgGradient: "from-cyan-500 to-blue-600" }
-    ];
-
     const [tabs, setTabs] = useState([allCategories[0], allCategories[1], allCategories[2]]);
-    const [selectedTab, setSelectedTab] = useState(tabs[0]);
-
-    // Remove tab function
-    const removeTab = (item) => {
+    const [selectedTab, setSelectedTab] = useState(tabs[0]);    // Typewriter effects - stable across re-renders now that allCategories is outside
+    const titleText = useMultiTypewriter([
+        "Manage your Ecommerce Empire",
+        "Scale your Business Growth", 
+        "Track Performance Metrics",
+        "Optimize Sales Strategy"
+    ], 80, 500, 2000);
+    
+    const urlText = useTypewriter("admin.zylokart.com", 120, 1000, true, false);    // Remove tab function - memoized with useCallback
+    const removeTab = useCallback((item) => {
         if (item === selectedTab) {
             const index = tabs.indexOf(item);
             const nextTab = index === tabs.length - 1 ? tabs[index - 1] : tabs[index + 1];
             setSelectedTab(nextTab);
         }
         setTabs(tabs.filter(tab => tab !== item));
-    };
-
-    // Add tab function
-    const addTab = () => {
-        const availableCategories = allCategories.filter(cat => !tabs.includes(cat));
+    }, [tabs, selectedTab]);    // Add tab function - now cycles through categories in order with better logic
+    const addTab = useCallback(() => {
+        if (tabs.length >= allCategories.length) return; // Prevent adding if all categories are already added
+        
+        // This filter is now much safer. It checks by a unique ID (the label) instead of object reference.
+        const availableCategories = allCategories.filter(
+            cat => !tabs.some(tab => tab.label === cat.label)
+        );
+        
         if (availableCategories.length > 0) {
-            const newTab = availableCategories[0];
-            setTabs([...tabs, newTab]);
+            const newTab = availableCategories[0]; // Always take the first available
+            setTabs(prevTabs => [...prevTabs, newTab]);
             setSelectedTab(newTab);
         }
-    };
-
-    // Top selling products data based on selected category
-    const getProductsForCategory = (category) => {
+    }, [tabs]);    // Top selling products data based on selected category - memoized to prevent re-creation
+    const getProductsForCategory = useMemo(() => {
         const productsByCategory = {
             'Electronics': [
                 { name: "iPhone 15 Pro", sales: 245, change: "+18%", color: "bg-green-500" },
@@ -99,8 +108,8 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                 { name: "Gaming Mouse", sales: 167, change: "+18%", color: "bg-green-500" }
             ]
         };
-        return productsByCategory[category] || productsByCategory['Electronics'];
-    };    useEffect(() => {
+        return (category) => productsByCategory[category] || productsByCategory['Electronics'];
+    }, []);useEffect(() => {
         if (salesRef.current) {
             addToCardRefs(salesRef.current);
         }
@@ -110,12 +119,12 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
         if (inventoryRef.current) {
             addToCardRefs(inventoryRef.current);
         }
-    }, [addToCardRefs]);    // Tab component for the category tabs
-    const CategoryTab = ({ item, onClick, isSelected }) => {        return (
+    }, [addToCardRefs]);    // Tab component for the category tabs - memoized to prevent unnecessary re-renders
+    const CategoryTab = React.memo(({ item, onClick, isSelected }) => {return (
             <Reorder.Item
                 value={item}
                 id={item.label}
-                initial={{ opacity: 0, y: 30 }}
+         //        initial={{ opacity: 0, y: 30 }}
                 animate={{
                     opacity: 1,
                     y: 0,
@@ -158,9 +167,8 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                                     {item.description}
                                 </motion.span>
                             </div>
-                        </div>
-                        {tabs.length > 1 && (
-                            <motion.div className="close ml-1">
+                        </div>                        {tabs.length > 1 && (
+                            <motion.div className="close ml-1 flex-shrink-0">
                                 <motion.button
                                     onPointerDown={(event) => {
                                         event.stopPropagation();
@@ -168,21 +176,27 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                                     }}
                                     initial={false}
                                     animate={{ 
-                                        backgroundColor: isSelected ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)",
-                                        opacity: isSelected ? 1 : 0.7
+                                        backgroundColor: isSelected ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.2)",
+                                        opacity: 1,
+                                        scale: 1
                                     }}
-                                    whileHover={{ scale: 1.1, opacity: 1 }}
-                                    className="w-4 h-4 rounded-full flex items-center justify-center transition-all"
+                                    whileHover={{ 
+                                        scale: 1.2, 
+                                        opacity: 1,
+                                        backgroundColor: "rgba(255, 0, 0, 0.7)"
+                                    }}
+                                    className="w-5 h-5 rounded-full flex items-center justify-center transition-all border border-white/30 hover:border-red-400"
                                 >
-                                    <TabCloseIcon />
+                                    <div className="w-3 h-3 flex items-center justify-center">
+                                        <TabCloseIcon />
+                                    </div>
                                 </motion.button>
                             </motion.div>
                         )}
-                    </div>
-                </motion.div>
+                    </div>                </motion.div>
             </Reorder.Item>
         );
-    };
+    });
 
     return (
         <section className="mt-16 px-6 text-center">
@@ -194,10 +208,10 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
             >                <h2 className="text-2xl md:text-4xl font-bold mb-4">
                     Welcome to <span className="text-blue-400">ZyloKart</span>
                     <br />
-                    <span className="text-gray-400">Ecommerce Solution</span>
+                    <span className="text-gray-400">Admin Dashboard</span>
                 </h2>
                 <p className="text-gray-400 max-w-xl mx-auto mb-6">
-                    Manage and build your ecommerce business with powerful analytics, inventory tracking, and sales insights.
+                    Manage your ecommerce business with powerful analytics, inventory tracking, and sales insights.
                 </p>
             </motion.div>            {/* Store Dashboard Preview */}
             <div className="mt-8 mb-12 relative">
@@ -213,9 +227,8 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                             <div className="w-3 h-3 rounded-full bg-red-500"></div>
                             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                        </div>
-                        <div className="flex-1 mx-10 rounded bg-gray-700 h-6 flex items-center justify-center text-xs text-gray-400">
-                            admin.zylokart.com
+                        </div>                        <div className="flex-1 mx-10 rounded bg-gray-700 h-6 flex items-center justify-center text-xs text-gray-400">
+                            {urlText}
                         </div>
                         <div className="flex space-x-2">
                             <ExpandIcon className="h-4 w-4" />
@@ -247,13 +260,11 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                                 <a href="#" className="px-2 py-1 bg-gray-800 rounded text-xs hover:bg-gray-700 transition-colors">Products</a>
                                 <a href="#" className="px-2 py-1 bg-gray-800 rounded text-xs hover:bg-gray-700 transition-colors">Analytics</a>
                             </div>
-                        </div>
-
-                        {/* Dashboard Title */}
+                        </div>                        {/* Dashboard Title */}
                         <div className="mb-4">
-                            <h2 className="text-lg font-bold mb-1">Manage your Ecommerce Empire</h2>
+                            <h2 className="text-lg font-bold mb-1">{titleText}</h2>
                             <p className="text-xs text-gray-400">December 16, 2025, 02:30pm</p>
-                        </div>                        {/* Metrics Cards */}
+                        </div>{/* Metrics Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <motion.div
                                 ref={salesRef}
@@ -434,7 +445,7 @@ const ZyloKartDashboard = ({ addToCardRefs }) => {
                                             >
                                                 <div className="flex items-center">
                                                     <motion.div 
-                                                        className="w-6 h-8 bg-white/20 rounded-lg mr-2 flex items-center justify-center"
+                                                        className="w-8 h-8 bg-white/20 rounded-lg mr-2 flex items-center justify-center"
                                                         whileHover={{ rotate: 180 }}
                                                         transition={{ duration: 0.3 }}
                                                     >
