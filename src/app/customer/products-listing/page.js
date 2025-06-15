@@ -37,13 +37,6 @@ const sampleProducts = [
 ]
 
 export default function Productslistings() {
-  // Placeholder for backend connection:
-  // const [products, setProducts] = useState([]);
-  // useEffect(() => {
-  //   fetch('/api/products')
-  //     .then(res => res.json())
-  //     .then(data => setProducts(data));
-  // }, []);
 
   const products = sampleProducts // Replace with backend data
 

@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { getProductsBySellerId, getSellerById, updateProductById } from '@/app/utiils/supabase/products'
+import { getProductsBySellerId, updateProductById } from '@/app/utiils/supabase/products'
 import supabase from '@/app/utiils/supabase/client'
 import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
@@ -14,6 +14,7 @@ export default function SellerProductList() {
   const [editIdx, setEditIdx] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [actionMsg, setActionMsg] = useState('')
+  const needSellerId = localStorage.getItem('seller_id')
 
   useEffect(() => {
     const fetchSessionAndSellerId = async () => {
@@ -70,6 +71,7 @@ export default function SellerProductList() {
       category: editForm.category,
       image: editForm.image_url,
       description: editForm.description,
+      seller_id: needSellerId
     }).eq('id', id)
     if (error) {
       setActionMsg('Failed to update product.')

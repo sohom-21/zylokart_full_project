@@ -77,7 +77,7 @@ export async function updateProductImageUrl(id, imageUrl) {
 export async function getProductsForCustomerHomePage(category){
     const{data, error} = await supabase
     .from('Products')
-    .select('id, name, price, image_url ,discount,price_offered,description, category,stock')
+    .select('id, name, price, image_url ,discount,price_offered,description, category,stock,image_url_1,image_url_2,image_url_3,image_url_4')
     .eq('category', category)
     .order('stock', {ascending: false})
 
