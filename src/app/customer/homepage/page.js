@@ -1,12 +1,12 @@
 'use client'
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import supabase from "@/app/utiils/supabase/client";
 import Image from 'next/image';
 import { getProductsForCustomerHomePage } from "@/app/utiils/supabase/products";
-
 
 // This file defines the customer homepage.
 // It displays featured products, categories, and other relevant information for customers.
@@ -15,7 +15,7 @@ export default function Homepage() {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
-
+  const router = useRouter();
 
   const fetchSession = async () => {
       try {
@@ -35,7 +35,10 @@ export default function Homepage() {
     // Check if user is logged in
     fetchSession();
   }, [])
-  
+
+  const handleProductClick = (productId) => {
+    router.push(`/customer/product-details/${productId}`);
+  };
 
   useEffect(() => {
     // Replace these URLs with your backend endpoints
@@ -99,10 +102,10 @@ export default function Homepage() {
         <Image
           src="/LandingPage/Hero.jpg"
           alt="Hero"
-          layout="fill" // Or specify width and height for fixed size
-          objectFit="cover" // Corresponds to CSS object-fit
-          quality={75} // Optional: default is 75
-          priority // Optional: if this is your LCP element
+          layout="fill"
+          objectFit="cover"
+          quality={75}
+          priority
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="z-10 max-w-3xl px-6 md:ml-16 flex flex-col items-start justify-center h-full text-left">
@@ -162,7 +165,11 @@ export default function Homepage() {
               <h3 className="text-2xl font-medium font-['Playfair_Display'] text-zinc-800 mb-6 mt-10">{categoryName}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {products[categoryName].map(product => (
-                  <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
+                  <div 
+                    key={product.id} 
+                    onClick={() => handleProductClick(product.id)}
+                    className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col cursor-pointer"
+                  >
                     <div className="relative">
                       <img src={product.image} alt={product.title} className="w-full h-80 object-cover" />
                       {product.label && (
@@ -181,8 +188,14 @@ export default function Homepage() {
                         ))}
                         <span className="ml-2 text-zinc-500 text-xs font-['Inter']">({product.ratingCount})</span>
                       </div>
-                      <button className="mt-auto w-full bg-zinc-800 text-white py-3 rounded hover:bg-zinc-900 transition font-['Inter']">
-                        Add to Cart
+                      <button 
+                        className="mt-auto w-full bg-zinc-800 text-white py-3 rounded hover:bg-zinc-900 transition font-['Inter']"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the card click
+                          handleProductClick(product.id);
+                        }}
+                      >
+                        View Details
                       </button>
                     </div>
                   </div>
