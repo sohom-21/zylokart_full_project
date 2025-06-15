@@ -109,7 +109,7 @@ export async function getSellerDashboardStats(seller_id) {
       },
       error: null
     }
-  } catch (error) {
+  } catch (error){
     return { data: null, error }
   }
 }
