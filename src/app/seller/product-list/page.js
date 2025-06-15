@@ -6,7 +6,6 @@ import SellerNavbar from '@/app/components/Navbars/Navbar-seller'
 import Footer from '@/app/components/Footer'
 import SellerDashboardSidebar from '@/app/components/sidebars/seller-sidebar'
 
-
 export default function SellerProductList() {
   const [sellerId, setSellerId] = useState(null);
   const [products, setProducts] = useState([]);

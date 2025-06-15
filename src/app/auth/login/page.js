@@ -58,12 +58,16 @@ export default function Login() {
             setLoading(false);
             return;
           }
-        } else {
+        } /*else if(userData.role === 'admin'){
+          router.push('/admin');
+          // window.location.href = '/admin/dashboard'
+        }*/ 
+       else {
           router.push('/customer/homepage');
           // window.location.href = '/dashboard'
         }
       }
-    } catch(error) {
+    } catch (error) {
       setMessage(error.message || 'An error occurred. Please try again later.')
       toast.error(error.message || 'An error occurred. Please try again later.')
       console.error('Login error:', error)
