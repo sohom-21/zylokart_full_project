@@ -31,7 +31,7 @@ export default function SellerNavbar() {
           <Link href="/seller/sellerhomepage" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
             <FiHome className="text-xl" /> Home
           </Link>
-          <Link href="/seller/products" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
+          <Link href="/seller/product-list" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">
             <FiBox className="text-xl" /> Products
           </Link>
           <Link href="/seller/seller-dashboard" className="flex items-center gap-2 font-semibold uppercase tracking-wide hover:text-amber-400 transition">

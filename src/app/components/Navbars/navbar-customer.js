@@ -33,7 +33,7 @@ export default function CustomerNavbar() {
 
 
   return (
-    <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6 py-3">
+    <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6">
       {/* Logo */}
       <Link
         href="/"
@@ -53,22 +53,16 @@ export default function CustomerNavbar() {
           href="/customer/products-listing"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
-          Shop
-        </Link>
-        <Link
-          href="/customer/products-listing"
-          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
-        >
           Collections
         </Link>
         <Link
-          href="/about"
+          href="/pages/about"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           About
         </Link>
         <Link
-          href="/contact"
+          href="/pages/contact-us"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           Contact
@@ -83,10 +77,10 @@ export default function CustomerNavbar() {
         />
         <Link href="/customer/cart" className="relative group">
           <FiShoppingCart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
-          {/* Example badge */}
+          {/* Example badge
           <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-xs rounded-full px-1">
             3
-          </span>
+          </span> */}
         </Link>
         <Link href="/customer/wishlist" className="group">
           <FiHeart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
@@ -102,8 +96,8 @@ export default function CustomerNavbar() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Your orders</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleUserlogout}>LogoOut</DropdownMenuItem>
+            <DropdownMenuItem><Link href="/customer/orders">Your Orders</Link></DropdownMenuItem>
+            <DropdownMenuItem onClick={handleUserlogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

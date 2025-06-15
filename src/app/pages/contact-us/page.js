@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import Navbar from '../../components/Navbars/Navbar-landing'
+import Navbar from '../../components/Navbars/AuthNavbar'
 import Footer from '../../components/Footer'
 
 export default function ContactUs() {

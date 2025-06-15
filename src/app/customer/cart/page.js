@@ -4,6 +4,7 @@ import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 import { getCartItems, updateCartQuantity, removeFromCart } from '@/app/utiils/supabase/cart'
 import { Trash2, Plus, Minus } from 'lucide-react'
+import Link from "next/link";
 
 // This file defines the customer's shopping cart page.
 // It displays items added to the cart and allows for quantity adjustments and checkout.
@@ -183,10 +184,11 @@ export default function CartPage() {
                     Apply Coupon
                   </button>
                 </div>
-
-                <button className="w-full bg-amber-300 text-black py-3 rounded font-medium hover:bg-amber-400 transition">
-                  Proceed to Checkout
-                </button>
+                <Link href="/customer/checkout">
+                  <button className="w-full bg-amber-300 text-black py-3 rounded font-medium hover:bg-amber-400 transition">
+                    Proceed to Checkout
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
