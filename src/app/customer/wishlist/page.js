@@ -31,7 +31,7 @@ export default function WishlistPage() {
   const handleDelete = async (wishlistId) => {
     const { error } = await removeFromWishlist(wishlistId)
     if (error) {
-      console.error('Error removing from wishlist:', error)
+      console.error('Error removing from wishlist:', error.message)
       return
     }
     

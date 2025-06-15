@@ -54,7 +54,7 @@ export async function addToWishlist(user_id, product_id) {
 // Remove item from wishlist
 export async function removeFromWishlist(wishlist_id) {
   const { data, error } = await supabase
-    .from('Wishlist')
+    .from('Wishlists')
     .delete()
     .eq('id', wishlist_id)
     .single()
@@ -64,7 +64,7 @@ export async function removeFromWishlist(wishlist_id) {
 // Remove item from wishlist by user_id and product_id
 export async function removeFromWishlistByProduct(user_id, product_id) {
   const { data, error } = await supabase
-    .from('Wishlist')
+    .from('Wishlists')
     .delete()
     .eq('user_id', user_id)
     .eq('product_id', product_id)
@@ -74,7 +74,7 @@ export async function removeFromWishlistByProduct(user_id, product_id) {
 // Check if item is in wishlist
 export async function isInWishlist(user_id, product_id) {
   const { data, error } = await supabase
-    .from('Wishlist')
+    .from('Wishlists')
     .select('id')
     .eq('user_id', user_id)
     .eq('product_id', product_id)
@@ -90,7 +90,7 @@ export async function isInWishlist(user_id, product_id) {
 // Get wishlist count for user
 export async function getWishlistCount(user_id) {
   const { data, error } = await supabase
-    .from('Wishlist')
+    .from('Wishlists')
     .select('id', { count: 'exact' })
     .eq('user_id', user_id)
   
