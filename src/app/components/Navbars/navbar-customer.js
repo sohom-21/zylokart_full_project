@@ -53,22 +53,16 @@ export default function CustomerNavbar() {
           href="/customer/products-listing"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
-          Shop
-        </Link>
-        <Link
-          href="/customer/products-listing"
-          className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
-        >
           Collections
         </Link>
         <Link
-          href="/about"
+          href="/pages/about"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           About
         </Link>
         <Link
-          href="/contact"
+          href="/pages/contact-us"
           className="flex items-center gap-1 font-medium font-['Inter'] uppercase tracking-wide hover:text-amber-400 text-white"
         >
           Contact
@@ -103,7 +97,7 @@ export default function CustomerNavbar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
             <DropdownMenuItem>Your orders</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleUserlogout}>LogoOut</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleUserlogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -21,10 +21,7 @@ export default function Navbar() {
             <Link href="/" className="font-medium hover:text-amber-400 text-white">
               Home
             </Link>
-            <Link href="/customer/products-listing" className="font-medium hover:text-amber-400 text-white">
-              Shop
-            </Link>
-            <Link href="/customer/products-listing" className="font-medium hover:text-amber-400 text-white">
+            <Link href="/auth/login" className="font-medium hover:text-amber-400 text-white">
               Collections
             </Link>
             <Link href="/pages/about" className="font-medium hover:text-amber-400 text-white">
@@ -75,10 +72,7 @@ export default function Navbar() {
             <Link href="/" className="block font-medium hover:text-amber-400 text-white" onClick={() => setMenuOpen(false)}>
               Home
             </Link>
-            <Link href="/customer/products-listing" className="block font-medium hover:text-amber-400 text-white" onClick={() => setMenuOpen(false)}>
-              Shop
-            </Link>
-            <Link href="/customer/products-listing" className="block font-medium hover:text-amber-400 text-white" onClick={() => setMenuOpen(false)}>
+            <Link href="/auth/login" className="block font-medium hover:text-amber-400 text-white" onClick={() => setMenuOpen(false)}>
               Collections
             </Link>
             <Link href="/pages/about" className="block font-medium hover:text-amber-400 text-white" onClick={() => setMenuOpen(false)}>

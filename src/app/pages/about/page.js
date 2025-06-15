@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import Navbar from '../../components/Navbars/Navbar-landing'
+import Navbar from '../../components/Navbars/AuthNavbar'
 import Footer from '../../components/Footer'
 
 export default function About() {

@@ -110,7 +110,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-medium font-['Playfair_Display'] text-zinc-800">
             Shop by Category
           </h2>
-          <Link href="/customer/products-listing">
+          <Link href="/auth/login">
             <button className="px-6 py-2 border border-zinc-800 rounded font-medium font-['Inter'] hover:bg-zinc-800 hover:text-white transition">
               View All
             </button>
@@ -131,43 +131,47 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 py-16 w-full">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl md:text-4xl font-medium font-['Playfair_Display'] text-zinc-800">Best Sellers</h2>
-          <Link href="/customer/products-listing">
+          <Link href="/auth/login">
             <button className="px-6 py-2 border border-zinc-800 rounded font-medium font-['Inter'] hover:bg-zinc-800 hover:text-white transition">View All</button>
           </Link>
         </div>
-        {Object.keys(products).map(categoryName => (
-          <div key={categoryName}>
-            <h3 className="text-2xl font-medium font-['Playfair_Display'] text-zinc-800 mb-6 mt-10">{categoryName}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-              {products[categoryName].map(product => (
-                <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
-                  <div className="relative">
-                    <img src={product.image} alt={product.title} className="w-full h-80 object-cover" />
-                    {product.label && (
-                      <span className={`absolute top-3 left-3 px-3 py-1 rounded-sm text-sm font-normal font-['Inter'] ${product.labelColor}`}>
-                        {product.label}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="uppercase text-zinc-500 text-xs font-['Inter'] tracking-wider mb-2">{product.category}</div>
-                    <div className="text-lg font-medium font-['Playfair_Display'] text-zinc-800 mb-2">{product.title}</div>
-                    <div className="text-lg font-bold font-['Inter'] text-zinc-800 mb-2">{product.price}</div>
-                    <div className="flex items-center mb-4">
-                      {[...Array(product.rating)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-lg leading-none">★</span>
-                      ))}
-                      <span className="ml-2 text-zinc-500 text-xs font-['Inter']">({product.ratingCount})</span>
+        <Link href="/auth/login">
+          {Object.keys(products).map(categoryName => (
+            <div key={categoryName}>
+              <h3 className="text-2xl font-medium font-['Playfair_Display'] text-zinc-800 mb-6 mt-10">{categoryName}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                {products[categoryName].map(product => (
+                  <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
+                    <div className="relative">
+                      <img src={product.image} alt={product.title} className="w-full h-80 object-cover" />
+                      {product.label && (
+                        <span className={`absolute top-3 left-3 px-3 py-1 rounded-sm text-sm font-normal font-['Inter'] ${product.labelColor}`}>
+                          {product.label}
+                        </span>
+                      )}
                     </div>
-                    <button className="mt-auto w-full bg-zinc-800 text-white py-3 rounded hover:bg-zinc-900 transition font-['Inter']">
-                      Add to Cart
-                    </button>
+
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="uppercase text-zinc-500 text-xs font-['Inter'] tracking-wider mb-2">{product.category}</div>
+                      <div className="text-lg font-medium font-['Playfair_Display'] text-zinc-800 mb-2">{product.title}</div>
+                      <div className="text-lg font-bold font-['Inter'] text-zinc-800 mb-2">{product.price}</div>
+                      <div className="flex items-center mb-4">
+                        {[...Array(product.rating)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg leading-none">★</span>
+                        ))}
+                        <span className="ml-2 text-zinc-500 text-xs font-['Inter']">({product.ratingCount})</span>
+                      </div>
+                      <button className="mt-auto w-full bg-zinc-800 text-white py-3 rounded hover:bg-zinc-900 transition font-['Inter']">
+                        Add to Cart
+                      </button>
+                    </div>
+
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </Link>
       </section>
 
       {/* Become a Seller */}
