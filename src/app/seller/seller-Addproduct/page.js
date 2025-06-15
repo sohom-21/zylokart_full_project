@@ -120,6 +120,8 @@ export default function SellerAddProduct() {
         const productData = {
           name: values.title,
           price: Number(values.price),
+          discount: values.discount ? Number(values.discount) : null,
+          price_offered: values.oldPrice ? Number(values.oldPrice) : null,
           description: values.description,
           image_url: imageUrl,
           image_url_1: thumbnailUrl1,
