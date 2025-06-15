@@ -96,7 +96,7 @@ export default function CustomerNavbar() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Your orders</DropdownMenuItem>
+            <DropdownMenuItem><Link href="/customer/orders">Your Orders</Link></DropdownMenuItem>
             <DropdownMenuItem onClick={handleUserlogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

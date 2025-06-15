@@ -90,7 +90,7 @@ export default function Home() {
           <p className="text-white text-lg md:text-xl font-light font-['Inter'] mb-8">
             Discover our curated collection of premium lifestyle essentials designed for modern living.
           </p>
-          <Link href="/customer/products-listing">
+          <Link href="/auth/login">
             <button className="bg-zinc-800 text-white px-8 py-4 rounded font-medium font-['Inter'] hover:bg-zinc-900 transition">
               Shop Collection
             </button>
