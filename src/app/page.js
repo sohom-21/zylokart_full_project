@@ -142,7 +142,7 @@ export default function Home() {
               {products[categoryName].map(product => (
                 <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
                   <div className="relative">
-                    <img src={product.image} alt={product.title} className="w-full h-80 object-cover" />
+                    <Image src={product.image} alt={product.title} height={800} width={600} priority quality={75} className="w-full h-80 object-cover" />
                     {product.label && (
                       <span className={`absolute top-3 left-3 px-3 py-1 rounded-sm text-sm font-normal font-['Inter'] ${product.labelColor}`}>
                         {product.label}
