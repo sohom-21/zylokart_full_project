@@ -33,7 +33,7 @@ export default function CustomerNavbar() {
 
 
   return (
-    <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6 py-3">
+    <nav className="w-full bg-zinc-800 text-white shadow-md transition-colors duration-200 flex items-center justify-between px-6">
       {/* Logo */}
       <Link
         href="/"
@@ -77,10 +77,10 @@ export default function CustomerNavbar() {
         />
         <Link href="/customer/cart" className="relative group">
           <FiShoppingCart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
-          {/* Example badge */}
+          {/* Example badge
           <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-xs rounded-full px-1">
             3
-          </span>
+          </span> */}
         </Link>
         <Link href="/customer/wishlist" className="group">
           <FiHeart className="text-2xl text-white group-hover:text-amber-400 transition-colors" />
