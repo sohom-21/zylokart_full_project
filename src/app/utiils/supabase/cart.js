@@ -28,7 +28,7 @@ export async function getCartItems(userUuid) {
 export async function addToCart(user_id, product_id, quantity = 1) {
   // First check if item already exists in cart
   const { data: existingItem, error: checkError } = await supabase
-    .from('Cart')
+    .from('Cart_items')
     .select('id, quantity')
     .eq('user_id', user_id)
     .eq('product_id', product_id)
@@ -59,7 +59,7 @@ export async function addToCart(user_id, product_id, quantity = 1) {
 // Update cart item quantity
 export async function updateCartQuantity(cart_id, quantity) {
   const { data, error } = await supabase
-    .from('Cart')
+    .from('Cart_items')
     .update({ quantity })
     .eq('id', cart_id)
     .select()
@@ -69,7 +69,7 @@ export async function updateCartQuantity(cart_id, quantity) {
 // Remove item from cart
 export async function removeFromCart(cart_id) {
   const { data, error } = await supabase
-    .from('Cart')
+    .from('Cart_items')
     .delete()
     .eq('id', cart_id)
   return { data, error }
@@ -78,7 +78,7 @@ export async function removeFromCart(cart_id) {
 // Clear entire cart for user
 export async function clearCart(user_id) {
   const { data, error } = await supabase
-    .from('Cart')
+    .from('Cart_items')
     .delete()
     .eq('user_id', user_id)
   return { data, error }
@@ -87,7 +87,7 @@ export async function clearCart(user_id) {
 // Get cart item count for user
 export async function getCartCount(user_id) {
   const { data, error } = await supabase
-    .from('Cart')
+    .from('Cart_items')
     .select('quantity')
     .eq('user_id', user_id)
   
@@ -106,7 +106,7 @@ export async function insertCartItem(userUuid, productId, quantity) {
         console.error('Error inserting cart item:', error);
         return null;
     }
-    return data;
+    return {data, error};
 }
 export async function updateCartItem(cartItemId, newQuantity) {
     const { data, error } = await supabase
@@ -118,7 +118,7 @@ export async function updateCartItem(cartItemId, newQuantity) {
         console.error('Error updating cart item:', error);
         return null;
     }
-    return data;
+    return { data,error };
 }
 
 export async function deleteCartItem(cartItemId) {

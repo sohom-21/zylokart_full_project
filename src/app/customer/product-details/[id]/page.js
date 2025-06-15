@@ -4,8 +4,9 @@ import { useParams } from 'next/navigation'
 import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 import { getProductById } from '@/app/utiils/supabase/products'
-import { addToCart } from '@/app/utiils/supabase/cart'
+import { addToCart,insertCartItem } from '@/app/utiils/supabase/cart'
 import { addToWishlist } from '@/app/utiils/supabase/wishlist'
+
 
 // This file defines the product details page.
 // It displays detailed information about a specific product, including images, description, and price.
@@ -37,7 +38,7 @@ export default function ProductDetail() {
       alert('User not logged in. Please log in to add to cart.')
       return
     }
-    const { error } = await addToCart(userId, id, quantity)
+    const { error } = await insertCartItem(userId, id, quantity)
     if (error) alert('Failed to add to cart: ' + error.message)
     else alert('Product added to cart!')
   }
@@ -77,7 +78,7 @@ export default function ProductDetail() {
             <img
               src={mainImage || product.image_url}
               alt={product.name}
-              className="w-full max-w-md h-[400px] object-cover rounded shadow"
+              className="w-full max-w-md h-[500px] object-cover rounded shadow"
             />
           </div>
           {/* Right: Details */}

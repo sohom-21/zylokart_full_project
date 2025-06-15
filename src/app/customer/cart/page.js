@@ -4,7 +4,6 @@ import CustomerNavbar from '@/app/components/Navbars/navbar-customer'
 import Footer from '@/app/components/Footer'
 import { getCartItems, updateCartQuantity, removeFromCart } from '@/app/utiils/supabase/cart'
 import { Trash2, Plus, Minus } from 'lucide-react'
-import Image from 'next/image'
 
 // This file defines the customer's shopping cart page.
 // It displays items added to the cart and allows for quantity adjustments and checkout.
@@ -100,11 +99,9 @@ export default function CartPage() {
               <div className="space-y-4">
                 {cart.map(item => (
                   <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
-                    <Image
+                    <img
                       src={item.Products?.image_url || 'https://placehold.co/80x80'}
                       alt={item.Products?.name || 'Product'}
-                      layout='fill'
-                      objectFit='cover'
                       className="w-20 h-20 object-cover rounded"
                     />
                     <div className="flex-1">
