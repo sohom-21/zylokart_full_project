@@ -14,7 +14,7 @@ export default function SellerProductList() {
   const [editIdx, setEditIdx] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [actionMsg, setActionMsg] = useState('')
-  const needSellerId = localStorage.getItem('seller_id')
+  // const needSellerId = localStorage.getItem('seller_id')
 
   useEffect(() => {
     const fetchSessionAndSellerId = async () => {
