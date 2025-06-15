@@ -57,6 +57,7 @@ export async function removeFromWishlist(wishlist_id) {
     .from('Wishlist')
     .delete()
     .eq('id', wishlist_id)
+    .single()
   return { data, error }
 }
 
