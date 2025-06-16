@@ -61,8 +61,8 @@ export default function Login() {
         } /*else if(userData.role === 'admin'){
           router.push('/admin');
           // window.location.href = '/admin/dashboard'
-        }*/ 
-       else {
+        }*/
+        else {
           router.push('/customer/homepage');
           // window.location.href = '/dashboard'
         }
@@ -80,13 +80,8 @@ export default function Login() {
       <Navbar />
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-12 gap-12 max-w-6xl mx-auto w-full">
         {/* Left: Shop at your leisure */}
-        <div className="flex-1 flex flex-col justify-center items-start mb-12 md:mb-0">
-          <span className="block text-white text-3xl font-normal font-['Inter'] mb-2">
-            Shop at your leisure ......
-          </span>
-          <span className="block text-white text-7xl font-normal font-['Inter']">
-            🛒
-          </span>
+        <div className="flex-1 flex flex-col justify-center items-start h-60">
+          <img src="/Login.svg" alt="Login" className="h-auto w-auto" />
         </div>
         {/* Right: Login Form */}
         <div className="flex-1 w-full max-w-md bg-white/20 rounded-2xl shadow-lg border border-white/20 p-8 backdrop-blur-md">

@@ -61,9 +61,12 @@ export default function SellerSignup() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-50">
+    <div className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,_#6683AC_0%,_rgba(66,52,147,0.94)_100%)]">
       <Navbar />
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-16">
+      <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-12 gap-12 max-w-6xl mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-center items-start h-60">
+          <img src="/Seller-signup.svg" alt="Login" className="h-auto w-auto" />
+        </div>
         <div className="w-full max-w-md bg-white rounded-lg shadow p-8">
           <h1 className="text-3xl font-bold font-['Playfair_Display'] text-zinc-800 mb-6 text-center">
             Seller Sign Up

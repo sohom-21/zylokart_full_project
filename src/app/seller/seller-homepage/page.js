@@ -17,7 +17,7 @@ export default function SellerHomepage() {
           Grow your business with powerful tools, secure transactions, and a trusted customer base.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-          <Link href="/seller/onboarding">
+          <Link href="/seller/seller-Addproduct">
             <button className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg transition-all duration-300 text-lg animate-bounce">
               Start Selling Now
             </button>
@@ -162,7 +162,7 @@ export default function SellerHomepage() {
               <div className="text-lg mb-2 text-zinc-900">📦 Instant product listing</div>
               <div className="text-lg mb-2 text-zinc-900">📲 24/7 support</div>
             </div>
-            <Link href="/seller/onboarding">
+            <Link href="/seller/seller-Addproduct">
               <button className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg transition-all duration-300 text-lg animate-bounce">
                 Start Selling Today
               </button>
