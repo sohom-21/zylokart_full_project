@@ -187,3 +187,42 @@
   background-color: #000000;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%236a29e6' fill-opacity='0.4'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
 }
+
+/* Typewriter Animation Styles */
+.typewriter-text {
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.typewriter-cursor {
+  animation: blink 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.typewriter-text-smooth {
+  transition: all 0.1s ease-in-out;
+}
+
+/* Enhanced typewriter container */
+.typewriter-container {
+  min-height: 1.5em;
+  display: flex;
+  align-items: center;
+}
+
+/* Prevent layout shift during typewriter effect */
+.typewriter-stable {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
