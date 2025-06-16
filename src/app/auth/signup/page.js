@@ -6,6 +6,7 @@ import { signUp } from '@/app/utiils/supabase/auth'
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image';
 
 // This file defines the user signup page.
 // It handles the registration process for new customers.
@@ -76,7 +77,7 @@ export default function Signup() {
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-12 gap-12 max-w-6xl mx-auto w-full">
         {/* Left: Shop at your leisure */}
         <div className="flex-1 flex flex-col justify-center items-start h-60">
-          <img src="/Signup.svg" alt="Login" className="h-auto w-auto" />
+          <Image src="/Signup.svg" alt="Login" height={700} width={400} quality={75} priority className="h-auto w-auto" />
         </div>
         {/* Right: Signup Form */}
         <div className="flex-1 w-full max-w-md bg-white/20 rounded-2xl shadow-lg border border-white/20 p-8 backdrop-blur-md">

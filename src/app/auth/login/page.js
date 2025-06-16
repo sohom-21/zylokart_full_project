@@ -8,7 +8,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { getUserById } from '@/app/utiils/supabase/user_data'
 import { getSellerByUserId } from '@/app/utiils/supabase/seller'
-// This file defines the user login page.
+import Image from 'next/image'// This file defines the user login page.
 // It handles user authentication and redirects upon successful login.
 export default function Login() {
   const [form, setForm] = useState({
@@ -81,7 +81,7 @@ export default function Login() {
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-12 gap-12 max-w-6xl mx-auto w-full">
         {/* Left: Shop at your leisure */}
         <div className="flex-1 flex flex-col justify-center items-start h-60">
-          <img src="/Login.svg" alt="Login" className="h-auto w-auto" />
+          <Image src="/Login.svg" alt="Login" height={680} width={400} quality={75} priority className="h-auto w-auto" />
         </div>
         {/* Right: Login Form */}
         <div className="flex-1 w-full max-w-md bg-white/20 rounded-2xl shadow-lg border border-white/20 p-8 backdrop-blur-md">
