@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import NavbarLanding from './Navbar-landing';
 import NavbarCustomer from './navbar-customer';
-import supabase from '@/app/utiils/supabase/client';
+import supabase from '../../utiils/supabase/client';
 
 const AuthNavbar = () => {
   const [session, setSession] = useState(null);
